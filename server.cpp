@@ -16,11 +16,17 @@
 using namespace Wt;
 using namespace std;
 
+//TODO kubik
+//tutaj wstaw wejsciowy widget strony czyli tam gdzie bedzie logowanie
 WApplication* create( const Wt::WEnvironment &env )
 {
 	return new WApplication(env);
 }
 
+/**************************************************************************************
+			    MAIN SERVER FUNCTION
+			This is where everything stars...
+**************************************************************************************/
 int main(int argc , char** argv)
 {
 	cout<<endl<<"Starting http server . . . "<<endl;
@@ -54,7 +60,8 @@ int main(int argc , char** argv)
 		}
 		else cout<<"This is not a valid port";
 	}
-
+	
+	//server object
 	WServer server;
 	const char *nolog = "/dev/null";
 	const char *logdir = "logs";
@@ -81,14 +88,18 @@ int main(int argc , char** argv)
 	options[6] = ports.c_str();
 	options[7] = "--accesslog";
 	options[8] = nolog;
-	//for(int i =0 ; i< 7; i++) cout<<options[i]<<endl;	
+	
+	//seting for our server
 	server.setServerConfiguration( 9 , const_cast<char**>( options ) , WTHTTP_CONFIGURATION );
 	server.addEntryPoint(Wt::Application , create);
 
+	//Let's roll the ball
 	server.start();
 	
 	cout<<endl<<"*****Server started*****"<<endl;
 	cin.ignore();
+	
+	//loop simulating command line
 	while(1)
 	{
 

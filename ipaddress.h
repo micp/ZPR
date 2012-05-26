@@ -7,9 +7,12 @@
 
 using namespace std;
 using namespace boost;
-
+//This error is thrown when trying to get invalid value of ip
 class InvalidValueException{};
 
+/*
+	read, check correctness and store IP address
+*/
 class IPAddress
 {
 public:
