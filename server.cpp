@@ -5,13 +5,14 @@
 #include <Wt/WServer>
 #include <Wt/WApplication>
 #include <Wt/WEnvironment>
-#include <Wt/WServer>
 
 #include <iostream>
 #include <string>
 #include <sstream>
 
 #include "ipaddress.h"
+#include "oxgameserver.h"
+#include "authapp.h"
 
 using namespace Wt;
 using namespace std;
@@ -20,12 +21,16 @@ using namespace std;
 //tutaj wstaw wejsciowy widget strony czyli tam gdzie bedzie logowanie
 WApplication* create( const Wt::WEnvironment &env )
 {
-	return new WApplication(env);
+	//standardowa pusta storna
+	//return new WApplication(env);
+
+	//logowanie
+	return new AuthApp(env);
 }
 
 /**************************************************************************************
 			    MAIN SERVER FUNCTION
-			This is where everything stars...
+			This is where everything starts...
 **************************************************************************************/
 int main(int argc , char** argv)
 {
@@ -62,7 +67,11 @@ int main(int argc , char** argv)
 	}
 	
 	//server object
-	WServer server;
+	//stadrd server
+	//WServer server;
+
+	//new server with database connection implemented
+	OXGameServer& server = OXGameServer::getServer();
 	const char *nolog = "/dev/null";
 	const char *logdir = "logs";
 	const char *opt1 = "--docroot";
