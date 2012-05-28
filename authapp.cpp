@@ -5,16 +5,16 @@ AuthApp::AuthApp( const WEnvironment &env ): WApplication(env) , session_( appRo
 {
 	session_.login().changed().connect( this,  &AuthApp::authEvent ); //sth like addActionListener
 	
-	//neccessary cast to get our server type
-	OXGameServer* srv = dynamic_cast<OXGameServer*>(env.server() );
+	//it should be thar same as in main
+	OXGameServer& srv = OXGameServer::getServer();
 	
 	//adding default authentication widget
 	//to change if not a default widget should be used
 	//TODO kubik
 	Auth::AuthWidget *authW = new Auth::AuthWidget(
-	 				srv->getAuthService() , session_.users() , session_.login() );
+	 				srv.getAuthService() , session_.users() , session_.login() );
 
-	authW->model()->addPasswordAuth(  &srv->getPasswordService() );
+	authW->model()->addPasswordAuth(  &srv.getPasswordService() );
 	authW->setRegistrationEnabled(true);
 
 	authW->processEnvironment();
