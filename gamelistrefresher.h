@@ -3,8 +3,12 @@
 
 class GameListRefresher
 {
-	public:
-		void RefreshGameList() = 0;
+	friend class GamesConnector;
+
+	private:
+	//This metod may not use iterationBegin and iterationEnd
+	//it may as the only function iterates the list witgout it
+		void refreshGameList() = 0;
 };
 
 #endif
