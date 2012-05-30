@@ -36,8 +36,8 @@ void OXGame::put(Field &f , int x , int y) {
   if(gameEnded) return;
   if(taken( getField(x, y) ))
     throw FieldTakenException();
-  //TODO should this copy f?
-  fields_[x][y] = &f;
+  delete fields_[x][y];
+  fields_[x][y] = f.clone();
   fieldsTaken++;
   if( fieldsTaken == size_ * size_) {
     FieldEmpty fe;
@@ -79,10 +79,8 @@ void OXGame::notifyEndOfGame(Field& f) {
   for(ListenerSet::iterator it = listeners_.begin();
       it != listeners_.end();
       ++it) {
-    //TODO this sucks.
-    if(f.type() == 'x') (*it)->gameEnded(FieldX());
-    if(f.type() == 'o') (*it)->gameEnded(FieldO());
-    if(f.type() == '0') (*it)->gameEnded(FieldEmpty());
+    EndGameVisitor visitor(*it);
+    f.accept(visitor);
   }
 }
 OXGame::CheckIterator::CheckIterator(const OXGame& ngame, int nx, int ny) {
