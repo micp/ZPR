@@ -4,11 +4,10 @@
 class GameListRefresher
 {
 	friend class GamesConnector;
-
-	private:
+	protected:
 	//This metod may not use iterationBegin and iterationEnd
 	//it may as the only function iterates the list witgout it
-		void refreshGameList() = 0;
+	virtual	void refreshGameList() = 0;
 };
 
 #endif
