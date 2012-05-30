@@ -14,14 +14,16 @@ class Field {
     virtual Field* clone() const = 0;
     //TODO tmp
     virtual char type() const = 0;
+  protected:
+    Field() {};
   private:
-    Field(const Field&);
+    Field(const Field&) {};
 }; 
 
 class FieldX: public Field {
   public:
-    FieldX();
-    FieldX(const FieldX&);
+    FieldX() {};
+    FieldX(const FieldX&) {};
     bool taken() const { return true; }
     void accept(FieldVisitor& fv);
     Field* clone() const { return new FieldX(*this); }
@@ -30,8 +32,8 @@ class FieldX: public Field {
 
 class FieldO: public Field {
   public:
-    FieldO();
-    FieldO(const FieldO&);
+    FieldO() {};
+    FieldO(const FieldO&) {};
     bool taken() const { return true; }
     void accept(FieldVisitor& fv);
     Field* clone() const { return new FieldO(*this); }
@@ -40,8 +42,8 @@ class FieldO: public Field {
 
 class FieldEmpty: public Field {
   public:
-    FieldEmpty();
-    FieldEmpty(const FieldEmpty&);
+    FieldEmpty() {};
+    FieldEmpty(const FieldEmpty&) {};
     bool taken() const { return false; }
     void accept(FieldVisitor& fv);
     Field* clone() const { return new FieldEmpty(*this); }

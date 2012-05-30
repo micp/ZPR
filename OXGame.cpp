@@ -39,7 +39,7 @@ void OXGame::put(Field &f , int x , int y) {
   delete fields_[x][y];
   fields_[x][y] = f.clone();
   fieldsTaken++;
-  if( fieldsTaken == size_ * size_) {
+  if( fieldsTaken >= size_ * size_) {
     FieldEmpty fe;
     notifyEndOfGame(fe);
     endGame();
@@ -62,6 +62,9 @@ const Field& OXGame::getField(int x , int y) {
 }
 int OXGame::getSize() {
   return size_;
+}
+void OXGame::endGame() {
+  gameEnded = true;
 }
 bool OXGame::checkLine(CheckIterator& c) {
   int count;
@@ -171,3 +174,9 @@ bool OXGame::BackslashCheckIterator::reverseCheck() {
   return curx+1 < size && cury-1 > 0 && 
     game.getField(curx+1, cury-1).type() == myType;
 }
+#ifdef __OXGAME_TEST__
+int test_main(int a, char** c) {
+  OXGame game();
+  BOOST_CHECK( 1 );
+}
+#endif

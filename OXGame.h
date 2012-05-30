@@ -6,6 +6,10 @@
 #include <set>
 #include "boost/multi_array.hpp"
 
+#ifdef __OXGAME_TEST__
+#include "boost/test/minimal.hpp"
+#endif
+
 class OXGame {
   public:
     typedef boost::multi_array<Field*, 2> MapArray;
