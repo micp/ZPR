@@ -5,9 +5,9 @@
 class EndOfGameListener
  {
 public:
-	void gameEnded(FieldEmpty f); //gdy brak mozliwosci ruchu
-	void gameEnded(FieldX f); //gdy wygral X
-	void gameEnded(FieldO f); //gdy wygral Y
+	void gameEnded(FieldEmpty f, int startX , int startY , int finishX , int finishY ); //gdy brak mozliwosci ruchu
+	void gameEnded(FieldX f, int startX , int startY , int finishX , int finishY ); //gdy wygral X
+	void gameEnded(FieldO f, int startX , int startY , int finishX , int finishY ); //gdy wygral Y
 };
 
 #endif
