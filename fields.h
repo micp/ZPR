@@ -4,6 +4,8 @@
 class FieldX;
 class FieldO;
 class FieldEmpty;
+//TODO temp:
+class EndOfGameListener;
 #include "endofgamelistener.h"
 
 class FieldVisitor;
@@ -12,8 +14,6 @@ class Field {
     virtual bool taken() const = 0;
     virtual void accept(FieldVisitor& fv) = 0;
     virtual Field* clone() const = 0;
-    //TODO tmp
-    virtual char type() const = 0;
   protected:
     Field() {};
   private:
@@ -24,30 +24,27 @@ class FieldX: public Field {
   public:
     FieldX() {};
     FieldX(const FieldX&) {};
+    Field* clone() const { return new FieldX(*this); }
     bool taken() const { return true; }
     void accept(FieldVisitor& fv);
-    Field* clone() const { return new FieldX(*this); }
-    char type() const { return 'x'; }
 };
 
 class FieldO: public Field {
   public:
     FieldO() {};
     FieldO(const FieldO&) {};
+    Field* clone() const { return new FieldO(*this); }
     bool taken() const { return true; }
     void accept(FieldVisitor& fv);
-    Field* clone() const { return new FieldO(*this); }
-    char type() const { return 'o'; }
 };
 
 class FieldEmpty: public Field {
   public:
     FieldEmpty() {};
     FieldEmpty(const FieldEmpty&) {};
+    Field* clone() const { return new FieldEmpty(*this); }
     bool taken() const { return false; }
     void accept(FieldVisitor& fv);
-    Field* clone() const { return new FieldEmpty(*this); }
-    char type() const { return '0'; }
 };
 
 class FieldTakenException {};
@@ -66,5 +63,14 @@ class EndGameVisitor : public FieldVisitor {
     void visit(FieldEmpty f);
   private:
     EndOfGameListener* listener;
+};
+class FieldTypeVisitor : public FieldVisitor {
+  public:
+    void visit(FieldX f);
+    void visit(FieldO f);
+    void visit(FieldEmpty f);
+    char getResult() const { return result; }
+  private:
+    char result;
 };
 #endif

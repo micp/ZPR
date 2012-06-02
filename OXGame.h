@@ -1,14 +1,10 @@
 #ifndef __OXGameh__
 #define __OXGameh__
 
-#include "fields.h"
 #include "endofgamelistener.h"
+#include "fields.h"
 #include <set>
 #include "boost/multi_array.hpp"
-
-#ifdef __OXGAME_TEST__
-#include "boost/test/minimal.hpp"
-#endif
 
 class OXGame {
   public:
@@ -19,8 +15,8 @@ class OXGame {
     void resetGame();
     void put(Field &f, int x, int y);
     void addEndOfGameListener(EndOfGameListener &l);
-    const Field& getField(int x, int y);
-    int getSize();
+    const Field& getField(int x, int y) const;
+    int getSize() const;
   private:
     class CheckIterator;
     class HorizCheckIterator;
@@ -28,7 +24,7 @@ class OXGame {
     class SlashCheckIterator;
     class BackslashCheckIterator;
 
-    MapArray fields_;  
+    MapArray *fields_;  
     ListenerSet listeners_;
     int size_;
     int winningLineLength;
@@ -43,17 +39,20 @@ class OXGame {
     VertCheckIterator getVertCheckIterator(int x, int y);
     SlashCheckIterator getSlashCheckIterator(int x, int y);
     BackslashCheckIterator getBackslashCheckIterator(int x, int y);
+    char getFieldType(int x, int y) const;
 };
 class OXGame::CheckIterator {
   public:
     CheckIterator(const OXGame& ngame, int nx, int ny);
     CheckIterator& operator++();
-    bool operator!=(CheckIterator& c);
+    bool operator!=(const CheckIterator& c) const;
     virtual bool hasNext() = 0;
+    int getCurX() const { return curx; }
+    int getCurY() const { return cury; }
   protected:
     int curx, cury;
     int size;
-    OXGame game;
+    const OXGame* game;
     int x, y;
     int side;
     char myType;

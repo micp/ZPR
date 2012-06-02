@@ -5,14 +5,15 @@ OXGame::OXGame(int size) {
   winningLineLength = 5;
   fieldsTaken = 0;
   gameEnded = false;
-  for(MapArray::iterator it = fields_.begin(); it != fields_.end(); ++it) {
+  fields_ = new MapArray(boost::extents[size_][size_]);
+  for(MapArray::iterator it = fields_->begin(); it != fields_->end(); ++it) {
     for(int i = 0; i < size_; ++i) {
       (*it)[i] = new FieldEmpty();
     }
   }
 }
 OXGame::~OXGame() {
-  for(MapArray::iterator it = fields_.begin(); it != fields_.end(); ++it) {
+  for(MapArray::iterator it = fields_->begin(); it != fields_->end(); ++it) {
     for(int i = 0; i < size_; ++i) {
       delete (*it)[i];
     }
@@ -21,12 +22,12 @@ OXGame::~OXGame() {
 void OXGame::resetGame() {
   fieldsTaken = 0;
   gameEnded = false;
-  for(MapArray::iterator it = fields_.begin(); it != fields_.end(); ++it) {
+  for(MapArray::iterator it = fields_->begin(); it != fields_->end(); ++it) {
     for(int i = 0; i < size_; ++i) {
       delete (*it)[i];
     }
   }
-  for(MapArray::iterator it = fields_.begin(); it != fields_.end(); ++it) {
+  for(MapArray::iterator it = fields_->begin(); it != fields_->end(); ++it) {
     for(int i = 0; i < size_; ++i) {
       (*it)[i] = new FieldEmpty();
     }
@@ -36,10 +37,10 @@ void OXGame::put(Field &f , int x , int y) {
   if(gameEnded) return;
   if(taken( getField(x, y) ))
     throw FieldTakenException();
-  delete fields_[x][y];
-  fields_[x][y] = f.clone();
+  delete (*fields_)[x][y];
+  (*fields_)[x][y] = f.clone();
   fieldsTaken++;
-  if( fieldsTaken >= size_ * size_) {
+  if(fieldsTaken >= size_ * size_) {
     FieldEmpty fe;
     notifyEndOfGame(fe);
     endGame();
@@ -57,17 +58,17 @@ void OXGame::put(Field &f , int x , int y) {
 void OXGame::addEndOfGameListener( EndOfGameListener &l ) {
   listeners_.insert(&l);
 }
-const Field& OXGame::getField(int x , int y) {
-  return *fields_[x][y];
+const Field& OXGame::getField(int x , int y) const {
+  return *(*fields_)[x][y];
 }
-int OXGame::getSize() {
+int OXGame::getSize() const {
   return size_;
 }
 void OXGame::endGame() {
   gameEnded = true;
 }
 bool OXGame::checkLine(CheckIterator& c) {
-  int count;
+  int count = 1;
   for(; c.hasNext(); ++c) {
     count++;
     if(count >= winningLineLength)
@@ -86,12 +87,17 @@ void OXGame::notifyEndOfGame(Field& f) {
     f.accept(visitor);
   }
 }
+char OXGame::getFieldType(int x, int y) const {
+  FieldTypeVisitor v;
+  (*(*fields_)[x][y]).accept(v);
+  return v.getResult();
+}
 OXGame::CheckIterator::CheckIterator(const OXGame& ngame, int nx, int ny) {
-  game = ngame;
-  size = game.getSize();
+  game = &ngame;
+  size = game->getSize();
   x = curx = nx;
   y = cury = ny;
-  myType = game.getField(x, y).type();
+  myType = game->getFieldType(nx, ny);
   side = 0;
 }
 OXGame::CheckIterator& OXGame::CheckIterator::operator++() {
@@ -99,12 +105,24 @@ OXGame::CheckIterator& OXGame::CheckIterator::operator++() {
     if(check()) increment();
     else {
       side = 1;
+      int prevx = curx;
+      int prevy = cury;
       curx = x;
       cury = y;
+      if(reverseCheck()) reverseIncrement();
+      else {
+	curx = prevx;
+	cury = prevy;
+	side = 2;
+      }
     }
   }
-  else
+  else if(side == 1) {
     if(reverseCheck()) reverseIncrement();
+    else {
+      side = 2;
+    }
+  }
   return *this;
 }
 bool OXGame::HorizCheckIterator::hasNext() {
@@ -139,44 +157,38 @@ OXGame::SlashCheckIterator OXGame::getSlashCheckIterator(int x, int y) {
 OXGame::BackslashCheckIterator OXGame::getBackslashCheckIterator(int x, int y) {
   return BackslashCheckIterator(*this, x, y);
 }
-bool OXGame::CheckIterator::operator!=(OXGame::CheckIterator& c) {
-  return *this != c;
+bool OXGame::CheckIterator::operator!=(const OXGame::CheckIterator& c) const {
+  return curx != c.getCurX() || cury != c.getCurY();
 }
 bool OXGame::HorizCheckIterator::check() {
   return curx+1 < size && 
-    game.getField(curx+1, cury).type() == myType;
+    game->getFieldType(curx+1, cury) == myType;
 }
 bool OXGame::HorizCheckIterator::reverseCheck() {
-  return curx-1 > 0 && 
-    game.getField(curx-1, cury).type() == myType;
+  return curx-1 >= 0 && 
+    game->getFieldType(curx-1, cury) == myType;
 }
 bool OXGame::VertCheckIterator::check() {
   return cury+1 < size && 
-    game.getField(curx, cury+1).type() == myType;
+    game->getFieldType(curx, cury+1) == myType;
 }
 bool OXGame::VertCheckIterator::reverseCheck() {
-  return cury-1 > 0 && 
-    game.getField(curx, cury-1).type() == myType;
+  return cury-1 >= 0 && 
+    game->getFieldType(curx, cury-1) == myType;
 }
 bool OXGame::SlashCheckIterator::check() {
   return curx+1 < size && cury+1 < size && 
-    game.getField(curx+1, cury+1).type() == myType;
+    game->getFieldType(curx+1, cury+1) == myType;
 }
 bool OXGame::SlashCheckIterator::reverseCheck() {
-  return curx-1 > 0 && cury-1 > 0 && 
-    game.getField(curx-1, cury-1).type() == myType;
+  return curx-1 >= 0 && cury-1 >= 0 && 
+    game->getFieldType(curx-1, cury-1) == myType;
 }
 bool OXGame::BackslashCheckIterator::check() {
-  return curx-1 > 0 && cury+1 > size && 
-    game.getField(curx-1, cury+1).type() == myType;
+  return curx-1 >= 0 && cury+1 < size && 
+    game->getFieldType(curx-1, cury+1) == myType;
 }
 bool OXGame::BackslashCheckIterator::reverseCheck() {
-  return curx+1 < size && cury-1 > 0 && 
-    game.getField(curx+1, cury-1).type() == myType;
+  return curx+1 < size && cury-1 >= 0 && 
+    game->getFieldType(curx+1, cury-1) == myType;
 }
-#ifdef __OXGAME_TEST__
-int test_main(int a, char** c) {
-  OXGame game();
-  BOOST_CHECK( 1 );
-}
-#endif
