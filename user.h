@@ -3,6 +3,9 @@
 
 #include <Wt/Dbo/Types>
 #include <Wt/WGlobal>
+#include <Wt/Dbo/WtSqlTraits>
+#include <Wt/Auth/Dbo/AuthInfo>
+
 #include <string>
 
 using namespace Wt;
@@ -10,30 +13,39 @@ using namespace Wt;
 //all it's fields are saved to database
 //TODO ups
 //add some fields to make ranking and game search
-class User
+class User;
+typedef Auth::Dbo::AuthInfo<User> AuthInfo;
+
+class User: public Dbo::Dbo<User>
 {
 public:
-	User() {};
-	User( std::string name): name_(name){}
+	User(): score_(0)  {};
+	User(const std::string name): name_(name), score_(0){}
 
 	void setName(std::string name) { name_ = name; }
 
-	void setPoints( int points ) { points_ = points; }
+	const std::string& getName() const { return name_; }
 
-	int getPoints() { return points_; }
-	std::string& getName() { return name_; }
+	void setScore( int score ) { score_ = score; }
 
+	int getScore() const { return score_; }
+
+	Wt::Dbo::ptr<AuthInfo> getAuthInfo() const { return *authInfos.begin(); }
+	
 	template<class Action>
 	void persist( Action &a )
 	{
-		Dbo::field(a , name_, "name");
-		Dbo::field(a , points_ , "points" );
+		Wt::Dbo::field(a , score_ , "score" );
+		
+		Wt::Dbo::hasMany(a, authInfos , Wt::Dbo::ManyToOne, "user");
 	}
 
 private:
+	Wt::Dbo::collection< Wt::Dbo::ptr<AuthInfo> > authInfos;
 	std::string name_;
-	int points_;
+	int score_;
 };
 
-typedef Auth::Dbo::AuthInfo<User> AuthInfo;
+DBO_EXTERN_TEMPLATES(User);
+
 #endif	
