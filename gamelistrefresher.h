@@ -4,6 +4,10 @@
 class GameListRefresher
 {
 	friend class GamesConnector;
+	
+	//user joined game
+	virtual void playerJoined() = 0;
+
 	//both users presed start and the game has began
 	virtual void gameStarted() = 0;
 
