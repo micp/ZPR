@@ -1,8 +1,14 @@
 #ifndef __OXGameh__
 #define __OXGameh__
 
-#include "fields.h"
-#include "endofgamelistener.h"
+//#include "endofgamelistener.h"
+class EndOfGameListener;
+class Field;
+class FieldX;
+class FieldO;
+class FieldEmpty;
+class FieldVisitor;
+class EndGameVisitor;
 #include <set>
 #include "boost/multi_array.hpp"
 
@@ -28,7 +34,7 @@ class OXGame {
     class SlashCheckIterator;
     class BackslashCheckIterator;
 
-    MapArray fields_;  
+    MapArray fields_;
     ListenerSet listeners_;
     int size_;
     int winningLineLength;
@@ -44,6 +50,10 @@ class OXGame {
     SlashCheckIterator getSlashCheckIterator(int x, int y);
     BackslashCheckIterator getBackslashCheckIterator(int x, int y);
 };
+
+#include "endofgamelistener.h"
+#include "fields.h"
+
 class OXGame::CheckIterator {
   public:
     CheckIterator(const OXGame& ngame, int nx, int ny);
@@ -67,9 +77,9 @@ class OXGame::HorizCheckIterator : public CheckIterator {
   public:
     bool hasNext();
   private:
-    HorizCheckIterator(const OXGame& ngame, int x, int y) : 
+    HorizCheckIterator(const OXGame& ngame, int x, int y) :
       CheckIterator(ngame, x, y) {}
-    friend OXGame::HorizCheckIterator 
+    friend OXGame::HorizCheckIterator
       OXGame::getHorizCheckIterator(int x, int y);
     bool check();
     bool reverseCheck();
@@ -80,9 +90,9 @@ class OXGame::VertCheckIterator : public CheckIterator {
   public:
     bool hasNext();
   private:
-    VertCheckIterator(const OXGame& ngame, int x, int y) : 
+    VertCheckIterator(const OXGame& ngame, int x, int y) :
       CheckIterator(ngame, x, y) {}
-    friend OXGame::VertCheckIterator 
+    friend OXGame::VertCheckIterator
       OXGame::getVertCheckIterator(int x, int y);
     bool check();
     bool reverseCheck();
@@ -95,7 +105,7 @@ class OXGame::SlashCheckIterator : public CheckIterator {
   private:
     SlashCheckIterator(const OXGame& ngame, int x, int y) :
       CheckIterator(ngame, x, y) {};
-    friend OXGame::SlashCheckIterator 
+    friend OXGame::SlashCheckIterator
       OXGame::getSlashCheckIterator(int x, int y);
     bool check();
     bool reverseCheck();
@@ -106,7 +116,7 @@ class OXGame::BackslashCheckIterator : public CheckIterator {
   public:
     bool hasNext();
   private:
-    BackslashCheckIterator(const OXGame& ngame, int x, int y) : 
+    BackslashCheckIterator(const OXGame& ngame, int x, int y) :
       CheckIterator(ngame, x, y) {};
     friend OXGame::BackslashCheckIterator
       OXGame::getBackslashCheckIterator(int x, int y);
@@ -115,4 +125,5 @@ class OXGame::BackslashCheckIterator : public CheckIterator {
     void increment() { curx--; cury++; }
     void reverseIncrement() { curx++; cury--; }
 };
+
 #endif
