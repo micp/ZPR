@@ -19,7 +19,6 @@ class menuWidget  : public WContainerWidget, public GameListRefresher
 {
 public:
   menuWidget(WContainerWidget * parent, Session * session_tmp);
-  //Wt::Signal<void>& backer() { return backer_; } 
   struct Coordinates
   {
     Coordinates(int c_x, int c_y) { x = c_x; y = c_y;}
@@ -37,16 +36,14 @@ public:
   virtual void refreshGameList();
   virtual void playerJoined();  
   virtual void endedWithDraw(int, int , int , int);  //TODO
-	virtual void endedWithWin(int , int , int , int ); //TODO
-	virtual void endedWithLose(int , int , int , int ); //TODO
-virtual std::string& getUserName();
+  virtual void endedWithWin(int , int , int , int ); //TODO
+  virtual void endedWithLose(int , int , int , int ); //TODO
+  virtual std::string& getUserName();
   void setUserName(std::string user_name) { userName = user_name;}
-virtual std::string& getSessionID() {return sessionID; }
-virtual Session* getSession() { return session_;}
+  virtual std::string& getSessionID() {return sessionID; }
+  virtual Session* getSession() { return session_;}
 private :
 	std::string sessionID;
-//  Signal<void> backer_;
-  void processBackButton(WPushButton *b);
   void processCreateNewGameButton(WPushButton *b);
   void processShowGamesButton();
   void processChooseGameButton(WPushButton *b);
@@ -60,7 +57,6 @@ private :
   void processGiveUpButton(WPushButton *b);
   void addBreaks(int num = 0);
   WPushButton * newGameButton;
-  //WPushButton * backButton;
   WPushButton * startGame;
   WPushButton * showGames;
   WPushButton * endConnection;
@@ -74,10 +70,11 @@ private :
   WTable * highScores;
   WText * success;
   WText * failure;
-  WText * playerExitedText;
-  WText * revengeProposedText;
+  WText * information;
   vector<std::pair<WPushButton*,GamesConnector::const_iterator> > joinButtons;
   bool joined;
+  bool ifCreator;
+  bool gameEnded;
   GamesConnector * gamesConnector;
   boost::shared_ptr<Game> gamePointer;	
   map<Coordinates,WPushButton*> gameButtons;

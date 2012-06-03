@@ -33,10 +33,13 @@ menuWidget::menuWidget(WContainerWidget * parent, Session * session_tmp) : WCont
 	sessionID = WApplication::instance()->sessionId();
 WApplication::instance()->enableUpdates();
 ///////////////////////////////////////////////////////////////////
-  setStyleClass("gamesAvailable");
+  //setStyleClass("gamesAvailable");
   setContentAlignment(AlignCenter);
   session_ = session_tmp;
   gamesConnector = &GamesConnector::getInstance();
+  addBreaks();
+  information = new WText("");
+  addWidget(information);
   addBreaks(1);
   highScoresButton = new WPushButton("HighScores",this);
   
@@ -53,6 +56,8 @@ WApplication::instance()->enableUpdates();
   startGame->hide();
   tmp2 = true; //Girls just wanna have fun
   joined = true; 
+  ifCreator = false;
+  gameEnded = false;
   endConnection = new WPushButton("Quit that game",this);
   endConnection->clicked().connect(boost::bind(&menuWidget::processEndGameConnection,this,endConnection));
   endConnection->hide();
@@ -62,6 +67,7 @@ WApplication::instance()->enableUpdates();
 
   addWidget(endConnection);
   gamesAvailable = new WTable(this);
+  gamesAvailable->setStyleClass("gamesAvailable");
   //gamesAvailable->setStyleClass("myStyle");
   addWidget(gamesAvailable);
 
@@ -75,6 +81,7 @@ WApplication::instance()->enableUpdates();
   
   highScoresButton->clicked().connect(boost::bind(&menuWidget::processHighScoresButton,this,highScoresButton));
   highScores = new WTable(this);
+  highScores->setStyleClass("gamesAvailable");
   highScores->hide();
   endGame = new WPushButton("End game");
   endGame->clicked().connect(boost::bind(&menuWidget::processEndGameButton,this));
@@ -89,26 +96,13 @@ WApplication::instance()->enableUpdates();
   revenge->clicked().connect(boost::bind(&menuWidget::processRevengeButton,this,revenge));
   addWidget(revenge);
   revenge->hide();
-  playerExitedText = new WText("Opponent has quitted");
-  addWidget(playerExitedText);
-  playerExitedText->hide();
-  revengeProposedText = new WText("Opponent proposed revenge");
-  addWidget(revengeProposedText);
-  revengeProposedText->hide();
 }
 
 
-void menuWidget::processBackButton(WPushButton *b)
-{
-  
-  //close the connection with the database (if was earlier created by join game or create game)
-  //logout the user
-  //backer_.emit();
-}
 
 void menuWidget::processHighScoresButton(WPushButton *b)
 {
-  playerExitedText->hide();
+  information->setText("");
   success->hide();
   endConnection->hide();
   if(b->text() == "HighScores")
@@ -123,7 +117,7 @@ void menuWidget::processHighScoresButton(WPushButton *b)
     highScores->clear();
     delete highScores;
     highScores = new WTable(this); //create new table of top gamers
-    //highScores->setStyleClass("myStyle");
+    highScores->setStyleClass("gamesAvailable");
     highScores->setHeaderCount(1);
     addWidget(highScores);
     highScores->elementAt(0,0)->addWidget(new WText("List of top gamers"));
@@ -152,6 +146,7 @@ void menuWidget::processEndGameConnection(WPushButton *b)
 {
   
   //close the connection with a decent game and let the user to choose another one
+  information->setText("");
   startGame->hide();
   success->hide();
   endConnection->hide();
@@ -161,10 +156,12 @@ void menuWidget::processEndGameConnection(WPushButton *b)
   highScoresButton->show();
   delete gamesAvailable;
   gamesAvailable = new WTable(this);
+  gamesAvailable->setStyleClass("gamesAvailable");
 }
 
 void menuWidget::processGiveUpButton(WPushButton*)
 {
+  information->setText("You gived up");
   endGame->enable();
   revenge->enable();
   giveUp->disable();
@@ -181,9 +178,10 @@ void menuWidget::processCreateNewGameButton(WPushButton *b)
   //stuff that requires database connection
   //if everything's fine, database return info (let's say "true")
   //and we can proceed
+  information->setText("New game created, waiting for another player");
   gamePointer =  gamesConnector->newGame(*this);
   joined = false; 
-  playerExitedText->hide();
+  ifCreator = true;
   endConnection->show();
   showGames->disable();
   gamesAvailable->hide();
@@ -196,7 +194,6 @@ void menuWidget::processCreateNewGameButton(WPushButton *b)
   endConnection->hide();
   success->hide();
 
-  if(gamesAvailable) gamesAvailable->hide();
   if(newGameButton) newGameButton->hide();
   showGames->hide();
   
@@ -213,9 +210,8 @@ void menuWidget::processCreateNewGameButton(WPushButton *b)
       WPushButton * newButton = new WPushButton();
       newButton->resize(35,35); //images are 30x30, just in case
       newButton->disable();
-     // newButton->setIcon(WLink("/square.gif"));
-     // newButton->setIcon(WLink("/white.jpg"));
-      newButton->setIcon(WLink("/white.jpg"));
+      newButton->setVerticalAlignment(Wt::AlignMiddle);
+      //newButton->setIcon(WLink("/white.jpg"));
       newButton->clicked().connect(boost::bind(&menuWidget::processClickButton,this,newButton,i,j));
       everything->elementAt(i,j)->addWidget(newButton);
       gameButtons.insert(make_pair(Coordinates(j,i),newButton));
@@ -230,15 +226,17 @@ void menuWidget::processCreateNewGameButton(WPushButton *b)
   giveUp->show();
   revenge->show();
   revenge->disable();
+  gamesConnector->unregister(*this);
   //adding two buttons on the right (End Game and Take Revenge)
 }
 
 void menuWidget::processShowGamesButton()
 {
+  information->setText("");
   std::cout<<"POCZATEK SHOW GAMES"<<std::endl;
-  playerExitedText->hide();
   highScoresButton->hide();
   showGames->disable();
+  newGameButton->disable();
   success->hide();
   joinButtons.clear();
   gamesAvailable->clear();
@@ -246,8 +244,7 @@ void menuWidget::processShowGamesButton()
   delete gamesAvailable;
   gamesAvailable = new WTable(this);
   
-  //gamesAvailable->setStyleClass("myStyle");
-  gamesAvailable->setHeaderCount(1);
+  gamesAvailable->setStyleClass("gamesAvailable");
   addWidget(gamesAvailable);
   gamesAvailable->elementAt(0,0)->addWidget(new WText("List of all available games:"));
    //preparing whole "scene" (nothing interesting above)
@@ -282,8 +279,7 @@ void menuWidget::processShowGamesButton()
 
 void menuWidget::processStartGameButton()
 {
-    
-    revengeProposedText->hide();
+    information->setText("Waiting for the opponent to start the game"); 
     startGame->disable();
     //endGame->disable();
     //giveUp->enable();
@@ -296,6 +292,7 @@ void menuWidget::processChooseGameButton(WPushButton *b)
   //stuff that requires database connection
   //if everything's fine, database return info (let's say "true")
   //and we can proceed
+   information->setText("Press start game");
   endConnection->show();
   showGames->disable();
   gamesAvailable->hide();
@@ -332,9 +329,8 @@ void menuWidget::processChooseGameButton(WPushButton *b)
       WPushButton * newButton = new WPushButton();
       newButton->resize(35,35); //images are 30x30, just in case
       newButton->disable();
-     // newButton->setIcon(WLink("/square.gif"));
-     // newButton->setIcon(WLink("/white.jpg"));
-      newButton->setIcon(WLink("/white.jpg"));
+      newButton->setVerticalAlignment(Wt::AlignMiddle);
+      //newButton->setIcon(WLink("/white.jpg"));
       newButton->clicked().connect(boost::bind(&menuWidget::processClickButton,this,newButton,i,j));
       everything->elementAt(i,j)->addWidget(newButton);
       gameButtons.insert(make_pair(Coordinates(j,i),newButton));
@@ -373,7 +369,9 @@ void menuWidget::processClickButton(WPushButton *b, int i, int j)
 
 void menuWidget::processHideListButton()
 {
+  information->setText("");
   success->hide();
+  newGameButton->enable();
   gamesAvailable->hide();
   highScoresButton->show();
   showGames->enable();
@@ -383,13 +381,13 @@ void menuWidget::processHideListButton()
 
 void menuWidget::processEndGameButton()
 {
+  information->setText("");
   gamePointer->exit(*this);
   if(!joined)
   {
     gamesConnector->deleteGame(gamePointer);
     joined = true;
   }
-  revengeProposedText->hide();
   highScoresButton->show();
   everything->clear();
   delete everything;
@@ -412,6 +410,7 @@ void menuWidget::processEndGameButton()
 
 void menuWidget::processRevengeButton(WPushButton * b)
 {
+    information->setText("Revenge proposed. Press start to begin");
     gamePointer->revenge(*this);
     map<Coordinates,WPushButton*>::iterator it;
     for(it = gameButtons.begin(); it!=gameButtons.end(); it++)
@@ -432,9 +431,8 @@ void menuWidget::processRevengeButton(WPushButton * b)
       WPushButton * newButton = new WPushButton();
       newButton->disable();
       newButton->resize(35,35); //images are 30x30, just in case
-     // newButton->setIcon(WLink("/square.gif"));
-     // newButton->setIcon(WLink("/white.jpg"));
-      newButton->setIcon(WLink("/white.jpg"));
+      newButton->setVerticalAlignment(Wt::AlignMiddle);
+      //newButton->setIcon(WLink("/white.jpg"));
       newButton->clicked().connect(boost::bind(&menuWidget::processClickButton,this,newButton,i,j));
       everything->elementAt(i,j)->addWidget(newButton);
       gameButtons.insert(make_pair(Coordinates(j,i),newButton));
@@ -454,6 +452,11 @@ void menuWidget::gameStarted()
 {
   WApplication * app = WApplication::instance();
   std::cout<<"GAME STARTED"<<std::endl;
+  gameEnded = false;
+  if(ifCreator) 
+  {
+   information->setText("It's your turn");
+  }
   endGame->disable();
   giveUp->enable();
   map<Coordinates,WPushButton*>::iterator it;
@@ -468,6 +471,13 @@ void menuWidget::fieldChanged( FieldX &f , int x , int y )
 {
   WApplication *app = WApplication::instance();
   gameButtons[Coordinates(x,y)]->setIcon(WLink("/cross.png"));
+  ifCreator = !ifCreator;
+  if(!gameEnded)
+  {
+  if(ifCreator) 
+   information->setText("It's your turn");   
+  else information->setText("Waiting for opponent move");
+  }
   gameButtons[Coordinates(x,y)]->disable();
   app->triggerUpdate();
 }
@@ -476,6 +486,13 @@ void menuWidget::fieldChanged( FieldO &f, int x, int y )
   WApplication *app = WApplication::instance();
   gameButtons[Coordinates(x,y)]->setIcon(WLink("/circle.png"));
   gameButtons[Coordinates(x,y)]->disable();
+  ifCreator = !ifCreator;
+  if(!gameEnded)
+  {
+  if(ifCreator)
+    information->setText("It's your turn");
+  else information->setText("Waiting for opponent move");
+  }
   app->triggerUpdate();
 }
 
@@ -483,6 +500,7 @@ void menuWidget::wonByGivingUp()
 {
   WApplication *app = WApplication::instance();
   endGame->enable();
+  information->setText("Your opponent has given up");
   revenge->enable();
   giveUp->disable();
   map<Coordinates,WPushButton*>::iterator it;
@@ -497,7 +515,7 @@ void menuWidget::wonByGivingUp()
 void menuWidget::playerExited()
 {
   WApplication *app = WApplication::instance();
-  playerExitedText->show();
+  information->setText("Your opponent has exited");
   processEndGameButton();
   app->triggerUpdate();
 }
@@ -505,7 +523,7 @@ void menuWidget::playerExited()
 void menuWidget::revengeProposed()
 {
   WApplication *app = WApplication::instance();
-  revengeProposedText->show();
+  information->setText("Revenge was proposed. Press start to begin");
   startGame->enable();
   revenge->disable();
   giveUp->disable();
@@ -521,9 +539,8 @@ void menuWidget::revengeProposed()
       WPushButton * newButton = new WPushButton();
       newButton->disable();
       newButton->resize(35,35); //images are 30x30, just in case
-     // newButton->setIcon(WLink("/square.gif"));
-     // newButton->setIcon(WLink("/white.jpg"));
-      newButton->setIcon(WLink("/white.jpg"));
+      newButton->setVerticalAlignment(Wt::AlignMiddle);
+      //newButton->setIcon(WLink("/white.jpg"));
       newButton->clicked().connect(boost::bind(&menuWidget::processClickButton,this,newButton,i,j));
       everything->elementAt(i,j)->addWidget(newButton);
       gameButtons.insert(make_pair(Coordinates(j,i),newButton));
@@ -536,6 +553,7 @@ void menuWidget::revengeProposed()
 void menuWidget::refreshGameList()
 {
   WApplication *app = WApplication::instance();
+  startGame->disable();
   processShowGamesButton();
   app->triggerUpdate();
 }
@@ -549,6 +567,7 @@ bool operator<(const menuWidget::Coordinates& c1, const menuWidget::Coordinates&
 void menuWidget::playerJoined()
 {
 	WApplication *app = WApplication::instance();
+  information->setText("Opponent connected. Press start to begin");
   std::cout<<" MOJ "<<(GameListRefresher*)this<<std::endl;
   startGame->enable();
   startGame->refresh();
@@ -557,7 +576,10 @@ void menuWidget::playerJoined()
 
 void menuWidget::endedWithWin(int a, int b, int c, int d)
 {
+  WApplication *app = WApplication::instance();
   std::cout<<"ENDED WITH WIN"<<std::endl;
+  gameEnded = true;
+  information->setText("You won!!!");
   giveUp->disable();
   endGame->enable();
   revenge->enable();    
@@ -566,11 +588,15 @@ void menuWidget::endedWithWin(int a, int b, int c, int d)
   {
     it->second->disable();
   }
+  app->triggerUpdate();
 }
 
 void menuWidget::endedWithDraw(int a, int b, int c, int d)
 {
+  WApplication *app = WApplication::instance();
   std::cout<<"ENDED WITH DRAW"<<std::endl;
+  information->setText("Ended with draw");
+  gameEnded = true;
   giveUp->disable();
   endGame->enable();
   revenge->enable(); 
@@ -579,11 +605,15 @@ void menuWidget::endedWithDraw(int a, int b, int c, int d)
   {
     it->second->disable();
   }
+  app->triggerUpdate();
 }
 
 void menuWidget::endedWithLose(int a, int b, int c, int d)
 {
+  WApplication *app = WApplication::instance();
+  information->setText("You loosed!");
   std:cout<<"ENDED WITH LOSE"<<std::endl;
+  gameEnded = true;
   giveUp->disable();
   endGame->enable();
   revenge->enable(); 
@@ -592,6 +622,7 @@ void menuWidget::endedWithLose(int a, int b, int c, int d)
   {
     it->second->disable();
   }
+  app->triggerUpdate();
 }
 
 std::string& menuWidget::getUserName()
