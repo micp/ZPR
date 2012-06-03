@@ -14,8 +14,8 @@ liby = Split('boost_regex boost_thread wthttp wt wtdbo wtdbosqlite3 boost_unit_t
 
 if ARGUMENTS.get('test', '0') == '1':
 	print "* * *BUILDING TESTS* * *"
-	Program( 'connectorTest' , Split( src_connector ) , LIBS = liby , CCFLAGS=' -D__GAMESCONNECTOR_TEST__')
-	Program('OXGameTest', Split(src_game), CCFLAGS=' -D__OXGAME_TEST__' )
+	Program( 'connectorTest' , Split( src_connector + 'user.cpp '  ) , LIBS = liby , CCFLAGS=' -D__GAMESCONNECTOR_TEST__')
+#	Program('OXGameTest', Split(src_game), CCFLAGS=' -D__OXGAME_TEST__' )
 
 else:
 	print "* * *BUILDING RELEASE* * *"
