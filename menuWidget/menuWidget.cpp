@@ -25,7 +25,6 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <sstream>
 using namespace Wt;
 using namespace std;
 menuWidget::menuWidget(WContainerWidget * parent, Session * session_tmp) : WContainerWidget(parent)
@@ -129,16 +128,6 @@ void menuWidget::processHighScoresButton(WPushButton *b)
     addWidget(highScores);
     highScores->elementAt(0,0)->addWidget(new WText("List of top gamers"));
 
-/*    for(int i = 1; i <11; i++)
-    {   
-      string gamerName = "Gamer"; //this will be returned by database
-      highScores->elementAt(i,0)->addWidget(new WText(gamerName));
-      stringstream temp;
-      temp<<i;// i is the value of score, that will be returned from database
-      string gameScore = temp.str();
-      highScores->elementAt(i,1)->addWidget(new WText(gameScore));
-  
-  } */
    std::vector<User> vec = session_->getHigestRankUsers(10);
    std::vector<User>::iterator it;
    int i = 1;
@@ -265,7 +254,7 @@ void menuWidget::processShowGamesButton()
   
   //TODO get data from the database. By now I just add some random values
   //Some loop gonna be necessary here
-  int i;
+  int i = 1;
   gamesConnector->iterationBegin();
   GamesConnector::const_iterator cit = gamesConnector->begin();
   for(cit ; cit != gamesConnector->end(); ++cit)
@@ -278,6 +267,7 @@ void menuWidget::processShowGamesButton()
     gamesAvailable->elementAt(i,1)->addWidget(btn);
     joinButtons.push_back(std::make_pair(btn,cit)); //vector of join buttons
     std::cout<<"ITERACJA"<<std::endl;
+    i++;
   }  
   std::cout<<"PO ITERACJI"<<std::endl;
   gamesConnector->iterationEnd();
@@ -552,6 +542,10 @@ void menuWidget::endedWithLose(int a, int b, int c, int d)
   std:cout<<"ENDED WITH LOSE"<<std::endl;
 }
 
+std::string& menuWidget::getUserName()
+{
+  return userName;
+}
 void menuWidget::addBreaks(int num)
 {
   for(int i = 0; i<=num; i++)

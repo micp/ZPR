@@ -39,8 +39,10 @@ public:
   virtual void endedWithDraw(int, int , int , int);  //TODO
 	virtual void endedWithWin(int , int , int , int ); //TODO
 	virtual void endedWithLose(int , int , int , int ); //TODO
-virtual std::string& getUserName() { static std::string a("kopytko"); return a; } //TODO	
-virtual std::string&getSessionID() {return sessionID; }
+virtual std::string& getUserName();
+  void setUserName(std::string user_name) { userName = user_name;}
+virtual std::string& getSessionID() {return sessionID; }
+virtual Session* getSession() { return session_;}
 private :
 	std::string sessionID;
 //  Signal<void> backer_;
@@ -80,6 +82,7 @@ private :
   boost::shared_ptr<Game> gamePointer;	
   map<Coordinates,WPushButton*> gameButtons;
   Session * session_;
+  std::string userName;
   const static int SIZE = 15;
 };
 

@@ -2,6 +2,7 @@
 #define MENU_H_
 #include <Wt/WText>
 #include "session.h"
+#include "menuWidget/menuWidget.h"
 class loginWidget;
 class menuWidget;
 class accountWidget;
@@ -18,6 +19,7 @@ public:
   void backAccountButton();
   void accountCreated();
   void addWidgets();
+  void setUserName(std::string user_name) { menu_->setUserName(user_name);}
 private:
   loginWidget * login_;
   menuWidget  * menu_;

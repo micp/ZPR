@@ -2,6 +2,8 @@
 #define __GAMELISTREFRESHERH__
 #include <string>
 #include "fields.h"
+#include "session.h"
+
 class GameListRefresher
 {
 	friend class GamesConnector;
@@ -36,7 +38,10 @@ public:
 	virtual void endedWithLose(int startX, int startY, int finishX, int finishY )=0;
 
 	virtual std::string& getUserName()=0;
+	
 	virtual std::string& getSessionID() = 0;
+
+	virtual Session * getSession() = 0;
 protected:
 	//This metod may not use iterationBegin and iterationEnd
 	//it may as the only function iterates the list witgout it

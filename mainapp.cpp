@@ -27,6 +27,7 @@ void MainApplication::authEvent()
     std::cout<<"USER: "<<session_.login().user().id()<<" logged in"<<std::endl;
     std::cout<<session_.getUserName()<<std::endl;
     gameMenu->logInButton();
+    gameMenu->setUserName(session_.getUserName());
   }
   else
   {

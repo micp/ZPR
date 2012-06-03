@@ -57,6 +57,7 @@ public:
 		synch_.readerLeave();
 	}
 private:
+	void updateScore( GameListRefresher* winner, GameListRefresher* looser );
 	GameListRefresher* refX_;
 	GameListRefresher* refO_;
 	
