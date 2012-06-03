@@ -2,8 +2,10 @@
 #define __USERH__
 
 #include <Wt/Dbo/Types>
+#include <Wt/Dbo/Dbo>
 #include <Wt/WGlobal>
 #include <Wt/Dbo/WtSqlTraits>
+#include <Wt/Dbo/Impl>
 #include <Wt/Auth/Dbo/AuthInfo>
 
 #include <string>

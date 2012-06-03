@@ -27,7 +27,6 @@ Dbo::ptr<User> Session::getUser()
 		
 		if( !user )
 		{
-			std::cout<<"**************************************Wszedlem*";
 			user = add( new User() );
 			user_data.modify()->setUser( user );
 		}
