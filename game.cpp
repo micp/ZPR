@@ -56,7 +56,7 @@ void Game::putField( GameListRefresher &ref , int x , int y )
 			game_.put( f , x , y );
 			WServer::instance()->post(refX_->getSessionID() , boost::bind( fX, refX_ , f , x , y) ); 
 			WServer::instance()->post(refO_->getSessionID() , boost::bind( fX, refO_ , f , x , y) ); 
-			turn_ = refO_;
+			if( turn_ != NULL ) turn_ = refO_;
 		} 
 		else
 		{
@@ -64,7 +64,7 @@ void Game::putField( GameListRefresher &ref , int x , int y )
 			game_.put( f , x , y);
 			WServer::instance()->post(refX_->getSessionID() , boost::bind( fO, refX_ , f , x , y) ); 
 			WServer::instance()->post(refO_->getSessionID() , boost::bind( fO, refO_ , f , x , y) ); 
-			turn_ = refX_;
+			if( turn_ != NULL ) turn_ = refX_;
 		}
 		
 	}
@@ -123,8 +123,15 @@ void Game::revenge( GameListRefresher &ref )
 	scoped_lock<interprocess_mutex>( mutexTurn_ );
 	scoped_lock<interprocess_mutex>( mutexStart_ );
 	
-	if( ( turn_ != NULL )|| startX_ || startO_ ) throw IllegalCommand();
+	if( ( turn_ != NULL )|| startX_ || startO_ )
+	{
+		if( turn_ != NULL ) std::cout<<"TURN"<<std::endl;
+		if( startX_) std::cout<<"startX"<<std::endl;
+		if( startO_ ) std::cout<<"startY"<<std::endl;
 
+
+		 throw IllegalCommand();
+	}
 	GameListRefresher *tmp = refX_;
 	refX_ = refO_;
 	refO_ = tmp;

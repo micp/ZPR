@@ -4,6 +4,7 @@
 #include <boost/interprocess/sync/scoped_lock.hpp>
 #include <boost/interprocess/sync/interprocess_mutex.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/bind.hpp>
 
 #include <iterator>
 #include <set>
@@ -77,6 +78,9 @@ public:
 	//means that user would like to set a new game
 	boost::shared_ptr<Game> newGame( GameListRefresher &ref );
 
+	//When you created game, there was no other player to play with you
+	void deleteGame( boost::shared_ptr<Game> g );
+ 
 	//after succesfull return from this function you will be no longer notified about list changes
 	boost::shared_ptr<Game> join( const_iterator &game , GameListRefresher &ref );
 

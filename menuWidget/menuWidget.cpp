@@ -51,8 +51,7 @@ WApplication::instance()->enableUpdates();
   startGame->disable();
   startGame->hide();
   tmp2 = true; //Girls just wanna have fun
-  ifRevenge = false; //If there is a possibillity to play again
-
+  joined = true; 
   endConnection = new WPushButton("Quit that game",this);
   endConnection->clicked().connect(boost::bind(&menuWidget::processEndGameConnection,this,endConnection));
   endConnection->hide();
@@ -182,7 +181,7 @@ void menuWidget::processCreateNewGameButton(WPushButton *b)
   //if everything's fine, database return info (let's say "true")
   //and we can proceed
   gamePointer =  gamesConnector->newGame(*this);
-  
+  joined = false; 
   playerExitedText->hide();
   endConnection->show();
   showGames->disable();
@@ -271,7 +270,7 @@ void menuWidget::processShowGamesButton()
   }  
   std::cout<<"PO ITERACJI"<<std::endl;
   gamesConnector->iterationEnd();
-  
+  gamesConnector->refRegister(*this); 
   
   WPushButton * hideGames = new WPushButton("Hide games list");
   hideGames->clicked().connect(boost::bind(&menuWidget::processHideListButton,this));
@@ -321,6 +320,7 @@ void menuWidget::processChooseGameButton(WPushButton *b)
   gamePointer = gamesConnector->join(joinButtons[i].second, *this);
   //preparing the game screen (nothing interesting above)
   gameButtons.clear();
+  removeWidget(everything);
   everything->clear();
   delete everything;
   everything = new WTable(this);
@@ -343,6 +343,7 @@ void menuWidget::processChooseGameButton(WPushButton *b)
   giveUp->show();
   revenge->show();
   revenge->disable();
+  addWidget(everything);
   //adding two buttons on the right (End Game and Take Revenge)
   vector<std::pair<WPushButton*,GamesConnector::const_iterator> >::iterator it;
   for(it = joinButtons.begin(); it!=joinButtons.end(); ++it)
@@ -375,12 +376,18 @@ void menuWidget::processHideListButton()
   gamesAvailable->hide();
   highScoresButton->show();
   showGames->enable();
+  gamesConnector->unregister(*this);
   //nothin' special
 }
 
 void menuWidget::processEndGameButton()
 {
   gamePointer->exit(*this);
+  if(!joined)
+  {
+    gamesConnector->deleteGame(gamePointer);
+    joined = true;
+  }
   revengeProposedText->hide();
   highScoresButton->show();
   everything->clear();
@@ -502,6 +509,26 @@ void menuWidget::revengeProposed()
   revenge->disable();
   giveUp->disable();
   endGame->enable();
+      gameButtons.clear();
+    everything->clear();
+    delete everything;
+    everything = new WTable(this);
+    //everything->setStyleClass("myStyle");
+    for(int i = 0; i<SIZE; i++)
+    {
+    for(int j = 0; j<SIZE; j++){
+      WPushButton * newButton = new WPushButton();
+      newButton->disable();
+      newButton->resize(35,35); //images are 30x30, just in case
+     // newButton->setIcon(WLink("/square.gif"));
+     // newButton->setIcon(WLink("/white.jpg"));
+      newButton->setIcon(WLink("/white.jpg"));
+      newButton->clicked().connect(boost::bind(&menuWidget::processClickButton,this,newButton,i,j));
+      everything->elementAt(i,j)->addWidget(newButton);
+      gameButtons.insert(make_pair(Coordinates(j,i),newButton));
+    }//adding the noughts&crosses buttons (225)
+  }
+ 
   app->triggerUpdate();
 }
 
@@ -530,16 +557,40 @@ void menuWidget::playerJoined()
 void menuWidget::endedWithWin(int a, int b, int c, int d)
 {
   std::cout<<"ENDED WITH WIN"<<std::endl;
+  giveUp->disable();
+  endGame->enable();
+  revenge->enable();    
+  map<Coordinates,WPushButton*>::iterator it;
+  for(it = gameButtons.begin(); it != gameButtons.end();it++)
+  {
+    it->second->disable();
+  }
 }
 
 void menuWidget::endedWithDraw(int a, int b, int c, int d)
 {
   std::cout<<"ENDED WITH DRAW"<<std::endl;
+  giveUp->disable();
+  endGame->enable();
+  revenge->enable(); 
+  map<Coordinates,WPushButton*>::iterator it;
+  for(it = gameButtons.begin(); it != gameButtons.end();it++)
+  {
+    it->second->disable();
+  }
 }
 
 void menuWidget::endedWithLose(int a, int b, int c, int d)
 {
   std:cout<<"ENDED WITH LOSE"<<std::endl;
+  giveUp->disable();
+  endGame->enable();
+  revenge->enable(); 
+  map<Coordinates,WPushButton*>::iterator it;
+  for(it = gameButtons.begin(); it != gameButtons.end();it++)
+  {
+    it->second->disable();
+  }
 }
 
 std::string& menuWidget::getUserName()

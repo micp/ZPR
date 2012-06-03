@@ -77,7 +77,7 @@ private :
   WText * playerExitedText;
   WText * revengeProposedText;
   vector<std::pair<WPushButton*,GamesConnector::const_iterator> > joinButtons;
-  bool ifRevenge;
+  bool joined;
   GamesConnector * gamesConnector;
   boost::shared_ptr<Game> gamePointer;	
   map<Coordinates,WPushButton*> gameButtons;

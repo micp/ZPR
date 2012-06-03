@@ -143,7 +143,8 @@ boost::shared_ptr<Game> GamesConnector::newGame( GameListRefresher &ref )
 	p = games_.insert( Node( new Game( ref ) , new bool(true) ) );
 
 	for( set<GameListRefresher *>::iterator it = refreshers_.begin(); it != refreshers_.end() ; ++it )
-					(*it)->refreshGameList();
+	WServer::instance()->post((*it)->getSessionID(), boost::bind( &GameListRefresher::refreshGameList , (*it) ));
+	
 	rw_synch_.writterLeave();
 	return p.first->game_;
 }
@@ -162,7 +163,7 @@ boost::shared_ptr<Game> GamesConnector::join( const_iterator &game , GameListRef
 	g->join( ref );
 
 	for( set<GameListRefresher *>::iterator it = refreshers_.begin(); it != refreshers_.end() ; ++it )
-					(*it)->refreshGameList();
+	WServer::instance()->post((*it)->getSessionID(), boost::bind( &GameListRefresher::refreshGameList, (*it) ));
 
 	rw_synch_.writterLeave();
 	return g;
@@ -179,6 +180,20 @@ void GamesConnector::unregister( GameListRefresher &ref )
 {
 	rw_synch_.writterEnter();
 	refreshers_.erase( &ref );
+	rw_synch_.writterLeave();
+}
+
+void GamesConnector::deleteGame( boost::shared_ptr<Game> g )
+{
+	rw_synch_.writterEnter();
+	for( set<Node>::iterator it = games_.begin() ; it != games_.end() ; ++it )
+	if( it->game_ == g )
+	{
+		games_.erase( it );
+		for( set<GameListRefresher *>::iterator it = refreshers_.begin(); it != refreshers_.end() ; ++it )
+		WServer::instance()->post((*it)->getSessionID(), boost::bind( &GameListRefresher::refreshGameList, (*it) ));
+		break;
+	}
 	rw_synch_.writterLeave();
 }
 
