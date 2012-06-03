@@ -6,6 +6,7 @@ class FieldO;
 class FieldEmpty;
 class EndOfGameListener;
 #include "endofgamelistener.h"
+#include "WinningLine.h"
 
 class FieldVisitor;
 class Field {
@@ -56,12 +57,14 @@ class FieldVisitor {
 };
 class EndGameVisitor : public FieldVisitor {
   public:
-    EndGameVisitor(EndOfGameListener *l) : listener(l) {}
+    EndGameVisitor(EndOfGameListener *l, const WinningLine& ln) : listener(l),
+      line(&ln) {}
     void visit(FieldX f);
     void visit(FieldO f);
     void visit(FieldEmpty f);
   private:
     EndOfGameListener* listener;
+    const WinningLine* line;
 };
 class FieldTypeVisitor : public FieldVisitor {
   public:

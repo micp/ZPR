@@ -42,16 +42,18 @@ void OXGame::put(Field &f , int x , int y) {
   fieldsTaken++;
   if(fieldsTaken >= size_ * size_) {
     FieldEmpty fe;
-    notifyEndOfGame(fe);
+    WinningLine l(0, 0, size_, size_);
+    notifyEndOfGame(fe, l);
     endGame();
   }
   HorizCheckIterator horiz = getHorizCheckIterator(x, y);
   VertCheckIterator vert = getVertCheckIterator(x, y);
   SlashCheckIterator slash = getSlashCheckIterator(x, y);
   BackslashCheckIterator backslash = getBackslashCheckIterator(x, y);
-  if(checkLine(horiz) || checkLine(vert)
-     || checkLine(slash) || checkLine(backslash)) {
-    notifyEndOfGame(f);
+  WinningLine line;
+  if(checkLine(horiz, line) || checkLine(vert, line)
+     || checkLine(slash, line) || checkLine(backslash, line)) {
+    notifyEndOfGame(f, line);
     endGame();
   }
 }
@@ -67,23 +69,28 @@ int OXGame::getSize() const {
 void OXGame::endGame() {
   gameEnded = true;
 }
-bool OXGame::checkLine(CheckIterator& c) {
+bool OXGame::checkLine(CheckIterator& c, WinningLine& line) {
   int count = 1;
   for(; c.hasNext(); ++c) {
     count++;
-    if(count >= winningLineLength)
+    if(count >= winningLineLength) {
+      line.setX1(c.getX1());
+      line.setX2(c.getX2());
+      line.setY1(c.getY1());
+      line.setY2(c.getY2());
       return true;
+    }
   }
   return false;
 }
 bool OXGame::taken(const Field& f) {
   return f.taken();
 }
-void OXGame::notifyEndOfGame(Field& f) {
+void OXGame::notifyEndOfGame(Field& f, const WinningLine& line) {
   for(ListenerSet::iterator it = listeners_.begin();
       it != listeners_.end();
       ++it) {
-    EndGameVisitor visitor(*it);
+    EndGameVisitor visitor(*it, line);
     f.accept(visitor);
   }
 }
@@ -97,12 +104,18 @@ OXGame::CheckIterator::CheckIterator(const OXGame& ngame, int nx, int ny) {
   size = game->getSize();
   x = curx = nx;
   y = cury = ny;
+  x1 = x2 = x;
+  y1 = y2 = y;
   myType = game->getFieldType(nx, ny);
   side = 0;
 }
 OXGame::CheckIterator& OXGame::CheckIterator::operator++() {
   if(side == 0) {
-    if(check()) increment();
+    if(check()) {
+      increment();
+      x1 = curx;
+      y1 = cury;
+    }
     else {
       side = 1;
       int prevx = curx;
@@ -118,8 +131,14 @@ OXGame::CheckIterator& OXGame::CheckIterator::operator++() {
     }
   }
   else if(side == 1) {
-    if(reverseCheck()) reverseIncrement();
+    if(reverseCheck()) {
+      reverseIncrement();
+      x2 = curx;
+      y2 = cury;
+    }
     else {
+      x2 = curx;
+      y2 = cury;
       side = 2;
     }
   }

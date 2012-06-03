@@ -28,13 +28,16 @@ Field*  FieldEmpty::clone() const {
   return new FieldEmpty(*this); 
 }
 void EndGameVisitor::visit(FieldX f) {
-  listener->gameEnded(f, 0 , 0 , 1 , 1);
+  listener->gameEnded(f, line->getX1(), line->getY1(), 
+      line->getX2(), line->getY2());
 }
 void EndGameVisitor::visit(FieldO f) {
-  listener->gameEnded(f, 0 , 0 , 1 , 1);
+  listener->gameEnded(f, line->getX1(), line->getY1(), 
+      line->getX2(), line->getY2());
 }
 void EndGameVisitor::visit(FieldEmpty f) {
-  listener->gameEnded(f, 0 , 0 , 1 ,1 );
+  listener->gameEnded(f, line->getX1(), line->getY1(), 
+      line->getX2(), line->getY2());
 }
 void FieldTypeVisitor::visit(FieldX f) {
   result = 'x';
