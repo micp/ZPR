@@ -1,10 +1,11 @@
 #ifndef __GAMELISTREFRESHERH__
 #define __GAMELISTREFRESHERH__
-
+#include <string>
+#include "fields.h"
 class GameListRefresher
 {
 	friend class GamesConnector;
-	
+public:	
 	//user joined game
 	virtual void playerJoined() = 0;
 
@@ -16,9 +17,6 @@ class GameListRefresher
 	
 	virtual void fieldChanged( FieldO &f , int x , int y ) = 0;	
 
-	//show when player has given up
-	virtual void givedUp() = 0;	
-	
 	//show another player why he has won
 	virtual void wonByGivingUp() = 0;
 	
@@ -29,8 +27,16 @@ class GameListRefresher
 	//Players wher switched ( X is now O etc)
 	//View should be taht same as in the begining
 	// Game is waiting for two start pressed
-	virtual void revangeProposed() = 0; 	
+	virtual void revengeProposed() = 0; 	
 	
+	virtual void endedWithDraw(int startX, int startY, int finishX, int finishY )=0;
+
+	virtual void endedWithWin(int startX, int startY, int finishX, int finishY )=0;
+
+	virtual void endedWithLose(int startX, int startY, int finishX, int finishY )=0;
+
+	virtual std::string& getUserName()=0;
+	virtual std::string& getSessionID() = 0;
 protected:
 	//This metod may not use iterationBegin and iterationEnd
 	//it may as the only function iterates the list witgout it

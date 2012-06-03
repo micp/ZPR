@@ -1,9 +1,77 @@
 #include "gamesconnector.h"
 
+const string& GamesConnector::const_iterator::operator*() const
+{
+	if( !*valid_ ) throw IteratorNotValid();
+	return my_ele_->game_->getServerUserName();
+}
+
+const string* GamesConnector::const_iterator::operator->() const
+{
+	if( !*valid_ ) throw IteratorNotValid();
+	return &( my_ele_->game_->getServerUserName() );
+}
+
+// pre
+GamesConnector::const_iterator& GamesConnector::const_iterator::operator++()
+{
+	if( my_ele_ != GamesConnector::getInstance().end().my_ele_ )
+	{
+		++my_ele_;
+		valid_ = my_ele_->valid_;
+	}
+	return *this;
+}
+
+// post
+GamesConnector::const_iterator GamesConnector::const_iterator::operator++(int)
+{
+	const_iterator tmp( *this );
+	++(*this);
+	return tmp;
+}
+
+// pre
+GamesConnector::const_iterator& GamesConnector::const_iterator::operator--()
+{
+	--my_ele_;
+	valid_ = my_ele_->valid_;
+	return *this;
+}
+
+// post
+GamesConnector::const_iterator GamesConnector::const_iterator::operator--(int)
+{
+	const_iterator tmp( *this );
+	--(*this);
+	return tmp;
+}
+
+bool GamesConnector::const_iterator::operator==(const const_iterator& a) const
+{	return my_ele_ == a.my_ele_; }
+
+
+
+bool GamesConnector::const_iterator::operator!=(const const_iterator& a) const
+{	return my_ele_ != a.my_ele_; }
+
+bool GamesConnector::const_iterator::valid() const
+{ 	return *valid_; }
+
+GamesConnector::const_iterator GamesConnector::begin() 
+{ 
+	return const_iterator( games_.begin() ); 
+}
+
+
+GamesConnector::const_iterator GamesConnector::end() 
+{ 
+	return const_iterator( games_.end() );  
+}
 //init instance
 GamesConnector* GamesConnector::instance_ = NULL;
 
-//declartion of static member 
+//declartion of static member
 interprocess_mutex GamesConnector::mutex_;
 
 bool operator<(const GamesConnector::Node& n1 , const GamesConnector::Node& n2)
@@ -36,7 +104,7 @@ void GamesConnector::Synchronizer::readerEnter()
 void GamesConnector::Synchronizer::readerLeave()
 {
 	mutex_reader_.lock();
-	
+
 	--readers_count_;
 	if(readers_count_ == 0 ) mutex_.unlock();
 
@@ -51,7 +119,7 @@ void GamesConnector::Synchronizer::writterEnter()
 	if( writters_count_ == 1 ) may_read_.lock();
 
 	mutex_writter_.unlock();
-	
+
 	mutex_.lock();
 }
 
@@ -67,13 +135,13 @@ void GamesConnector::Synchronizer::writterLeave()
 	mutex_writter_.unlock();
 }
 
-boost::shared_ptr<Game> GamesConnector::newGame( User &user )
+boost::shared_ptr<Game> GamesConnector::newGame( GameListRefresher &ref )
 {
 	rw_synch_.writterEnter();
 
 	pair<set<Node>::iterator , bool> p;
-	p = games_.insert( Node( new Game( user ) , new bool(true) ) );	
-	
+	p = games_.insert( Node( new Game( ref ) , new bool(true) ) );
+
 	for( set<GameListRefresher *>::iterator it = refreshers_.begin(); it != refreshers_.end() ; ++it )
 					(*it)->refreshGameList();
 	rw_synch_.writterLeave();
@@ -83,7 +151,7 @@ boost::shared_ptr<Game> GamesConnector::newGame( User &user )
 boost::shared_ptr<Game> GamesConnector::join( const_iterator &game , GameListRefresher &ref )
 {
 	rw_synch_.writterEnter();
-	
+
 	if( !game.valid() ) { rw_synch_.writterLeave(); throw IteratorNotValid(); }
 
 	*game.valid_ = false;
@@ -91,8 +159,8 @@ boost::shared_ptr<Game> GamesConnector::join( const_iterator &game , GameListRef
 	boost::shared_ptr<Game> g = game.my_ele_->game_;
 	games_.erase( game.my_ele_ );
 	refreshers_.erase( &ref );
-	g->join( ref );  
-	
+	g->join( ref );
+
 	for( set<GameListRefresher *>::iterator it = refreshers_.begin(); it != refreshers_.end() ; ++it )
 					(*it)->refreshGameList();
 
@@ -131,7 +199,7 @@ public:
 				BOOST_REQUIRE(  *itv == *it);
 			}
 			BOOST_REQUIRE( itv == ref_->end() );
-			
+
 			gc_->iterationEnd();
 			synch_->readerLeave();
 			usleep( 2000 );
@@ -155,18 +223,19 @@ public:
 		u.setName( string(np) );
 
 		while( !*stop )
-		{	
+		{
+			Ref r( u );
 			synch_->writterEnter();
-			gc_->newGame( u );
+			gc_->newGame( r );
 			ref_->insert( u.getName() );
 			synch_->writterLeave();
-			
+
 			np[0] += 1;
 			u.setName( string(np) );
 			++i;
 			if(np[0] == '{') break;
 			usleep( 23000 );
-		}	
+		}
 	}
 	GamesConnector *gc_;
 	set<string> *ref_;
@@ -187,27 +256,26 @@ int test_main( int a , char** c )
 	r.ref_ = r2.ref_ = w.ref_ = &s;
 	r.synch_ = r2.synch_ = w.synch_ = synch;
 	r.stop = r2.stop = w.stop = &f;
-	
-	cout<<"**** TESTING class GamesConnector with synchronization"<<endl<<endl;	
-	cout<<"**** readers + writter start"<<endl; cout.flush();	
+
+	cout<<"**** TESTING class GamesConnector with synchronization"<<endl<<endl;
+	cout<<"**** readers + writter start"<<endl; cout.flush();
 	boost::thread thr( r );
 	boost::thread thr2( r2 );
 	w();
 	BOOST_REQUIRE( thr.joinable() && thr2.joinable() );
-	cout<<"**** readers + writter ok"<<endl; cout.flush();	
-	cout<<"**** readers only start"<<endl; cout.flush();	
+	cout<<"**** readers + writter ok"<<endl; cout.flush();
+	cout<<"**** readers only start"<<endl; cout.flush();
 	sleep( 2 );
 	BOOST_REQUIRE( thr.joinable() && thr2.joinable() );
-	cout<<"**** readers only ok "<<endl; cout.flush();	
+	cout<<"**** readers only ok "<<endl; cout.flush();
 	f = true;
 	thr.join();
 	thr2.join();
 	delete gc;
 	delete synch;
-	return 0;	
+	return 0;
 }
 #endif
-
 
 
 
