@@ -42,7 +42,7 @@ void Game::putField( GameListRefresher &ref , int x , int y )
 	scoped_lock<interprocess_mutex>( mutexStart_ );
 	
 	if( !(startX_ && startO_ ) ) throw IllegalCommand();
-	if( turn_ != &ref ) throw IllegalCommand();
+	if( turn_ != &ref )return;
 
 	if( ( x >= game_.getSize() )||( y >= game_.getSize() ) ) throw IllegalCommand();
 	
@@ -61,6 +61,7 @@ void Game::putField( GameListRefresher &ref , int x , int y )
 			game_.put( f , x , y );
 WServer::instance()->post(refX_->getSessionID() , boost::bind( fX, refX_ , f , x , y) ); 
 WServer::instance()->post(refO_->getSessionID() , boost::bind( fX, refO_ , f , x , y) ); 
+			turn_ = refO_;
 	//		refX_->fieldChanged(f , x , y ); //TODO 
 	//		refO_->fieldChanged(f , x , y); //TODO 
 		} 
@@ -70,10 +71,11 @@ WServer::instance()->post(refO_->getSessionID() , boost::bind( fX, refO_ , f , x
 			game_.put( f , x , y);
 WServer::instance()->post(refX_->getSessionID() , boost::bind( fO, refX_ , f , x , y) ); 
 WServer::instance()->post(refO_->getSessionID() , boost::bind( fO, refO_ , f , x , y) ); 
+			turn_ = refX_;
 //			refX_->fieldChanged(f , x , y ); //TODO 
 //			refO_->fieldChanged(f , x , y); //TODO 
 		}
-
+		
 	}
 	catch( FieldTakenException &e ) {}
 
@@ -130,7 +132,7 @@ void Game::revenge( GameListRefresher &ref )
 	scoped_lock<interprocess_mutex>( mutexTurn_ );
 	scoped_lock<interprocess_mutex>( mutexStart_ );
 	
-	if( ( turn_ == NULL )|| startX_ || startO_ ) throw IllegalCommand();
+	if( ( turn_ != NULL )|| startX_ || startO_ ) throw IllegalCommand();
 
 	GameListRefresher *tmp = refX_;
 	refX_ = refO_;
