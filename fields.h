@@ -4,6 +4,7 @@
 class FieldX;
 class FieldO;
 class FieldEmpty;
+class EndOfGameListener;
 #include "endofgamelistener.h"
 
 class FieldVisitor;
@@ -24,30 +25,30 @@ class FieldX: public Field {
   public:
     FieldX() {};
     FieldX(const FieldX&) {};
-    bool taken() const { return true; }
+    bool taken() const;// { return true; }
     void accept(FieldVisitor& fv);
-    Field* clone() const { return new FieldX(*this); }
-    char type() const { return 'x'; }
+    Field* clone() const;// { return new FieldX(*this); }
+    char type() const;// { return 'x'; }
 };
 
 class FieldO: public Field {
   public:
     FieldO() {};
     FieldO(const FieldO&) {};
-    bool taken() const { return true; }
+    bool taken() const;// { return true; }
     void accept(FieldVisitor& fv);
-    Field* clone() const { return new FieldO(*this); }
-    char type() const { return 'o'; }
+    Field* clone() const;// { return new FieldO(*this); }
+    char type() const;// { return 'o'; }
 };
 
 class FieldEmpty: public Field {
   public:
     FieldEmpty() {};
     FieldEmpty(const FieldEmpty&) {};
-    bool taken() const { return false; }
+    bool taken() const;// { return false; }
     void accept(FieldVisitor& fv);
-    Field* clone() const { return new FieldEmpty(*this); }
-    char type() const { return '0'; }
+    Field* clone() const;// { return new FieldEmpty(*this); }
+    char type() const;// { return '0'; }
 };
 
 class FieldTakenException {};
@@ -67,4 +68,5 @@ class EndGameVisitor : public FieldVisitor {
   private:
     EndOfGameListener* listener;
 };
+//#include "endofgamelistener.h"
 #endif
