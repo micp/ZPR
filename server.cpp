@@ -12,7 +12,8 @@
 
 #include "ipaddress.h"
 #include "oxgameserver.h"
-#include "authapp.h"
+//#include "authapp.h"
+#include "mainapp.h"
 
 using namespace Wt;
 using namespace std;
@@ -25,7 +26,8 @@ WApplication* create( const Wt::WEnvironment &env )
 	//return new WApplication(env);
 
 	//logowanie
-	return new AuthApp(env);
+	//return new AuthApp(env);
+	return new MainApplication( env );
 }
 
 /**************************************************************************************
