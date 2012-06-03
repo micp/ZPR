@@ -27,19 +27,7 @@ void menu::logOutButton()
      menu_ = new menuWidget(this, session_);
      menu_->hide();
 }
-void menu::createAccountButton()
-{
-      login_->hide();
-      menu_->hide();
-      account_->show();
-}
 
-void menu::accountCreated()
-{
-    account_->hide();
-    login_->show();
-    login_->accountSuccessful();
-}
 void menu::backMenuButton()
 {
     menu_->clear();
@@ -48,12 +36,10 @@ void menu::backMenuButton()
     menu_->hide();
 }
 
-void menu::backAccountButton()
-{
-}
 menu::menu(WContainerWidget *parent, Session * session_tmp) : WContainerWidget(parent)
 {
   setContentAlignment(AlignCenter);
+//  setStyleClass("gamesAvailable");
   session_ = session_tmp;
   title = new WText("Noughts & Crosses");
   title->decorationStyle().font().setSize(20);
