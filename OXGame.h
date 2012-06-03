@@ -77,7 +77,7 @@ class OXGame {
     int fieldsTaken;
     bool gameEnded;
 
-    void notifyEndOfGame(Field& f, const WinningLine& line);
+    void notifyEndOfGame(Field& f, WinningLine& line);
     void endGame();
     bool taken(const Field& f);
     bool checkLine(CheckIterator& it, WinningLine& line);

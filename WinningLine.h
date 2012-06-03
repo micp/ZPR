@@ -13,6 +13,7 @@ class WinningLine {
     int getX2() const { return x2; }
     int getY1() const { return y1; }
     int getY2() const { return y2; }
+    void swap();
   private:
     int x1, x2, y1, y2;
 };

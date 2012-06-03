@@ -57,14 +57,15 @@ class FieldVisitor {
 };
 class EndGameVisitor : public FieldVisitor {
   public:
-    EndGameVisitor(EndOfGameListener *l, const WinningLine& ln) : listener(l),
+    EndGameVisitor(EndOfGameListener *l, WinningLine& ln) : listener(l),
       line(&ln) {}
     void visit(FieldX f);
     void visit(FieldO f);
     void visit(FieldEmpty f);
   private:
+    void checkSwap();
     EndOfGameListener* listener;
-    const WinningLine* line;
+    WinningLine* line;
 };
 class FieldTypeVisitor : public FieldVisitor {
   public:

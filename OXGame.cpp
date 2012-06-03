@@ -86,7 +86,7 @@ bool OXGame::checkLine(CheckIterator& c, WinningLine& line) {
 bool OXGame::taken(const Field& f) {
   return f.taken();
 }
-void OXGame::notifyEndOfGame(Field& f, const WinningLine& line) {
+void OXGame::notifyEndOfGame(Field& f, WinningLine& line) {
   for(ListenerSet::iterator it = listeners_.begin();
       it != listeners_.end();
       ++it) {
