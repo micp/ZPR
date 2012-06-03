@@ -28,7 +28,12 @@ AuthApp::AuthApp( const WEnvironment &env ): WApplication(env) , session_( appRo
 //cout's are just for testnig to remove later
 void AuthApp::authEvent()
 {
-	if( session_.login().loggedIn() ) std::cout<< "User: "<<session_.login().user().id()<<" logged in"<<std::endl;
+	if( session_.login().loggedIn() )
+	{
+		 std::cout<< "User: "<<session_.login().user().id()<<" logged in"<<std::endl;
+		std::cout<<session_.getUserName()<<std::endl;
+		session_.setScore(0);
+	}
 	else std::cout<<"User logged out"<<std::endl;
 }
 
