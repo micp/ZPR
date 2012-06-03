@@ -8,7 +8,7 @@ src_authapp = "mainapp.cpp session.cpp user.cpp "
 
 src_connector = "gamesconnector.cpp "
 
-src_game = "fields.cpp OXGame.cpp game.cpp endofgamelistener.cpp "
+src_game = "fields.cpp WinningLine.cpp OXGame.cpp game.cpp endofgamelistener.cpp "
 src_game_test = "OXGame_test.cpp "
 
 src_kubik = " menuWidget/menuWidget.cpp accountWidget/accountWidget.cpp loginWidget/loginWidget.cpp menu.cpp "

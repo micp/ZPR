@@ -27,15 +27,25 @@ bool FieldEmpty::taken() const {
 Field*  FieldEmpty::clone() const {
   return new FieldEmpty(*this); 
 }
+void EndGameVisitor::checkSwap() {
+  int sX = line->getX1();
+  int sY = line->getY1();
+  int tX = line->getX2();
+  int tY = line->getY2();
+  if(sX > tX || (sX == tX && sY > tY)) line->swap();
+}
 void EndGameVisitor::visit(FieldX f) {
+  checkSwap();
   listener->gameEnded(f, line->getX1(), line->getY1(), 
       line->getX2(), line->getY2());
 }
 void EndGameVisitor::visit(FieldO f) {
+  checkSwap();
   listener->gameEnded(f, line->getX1(), line->getY1(), 
       line->getX2(), line->getY2());
 }
 void EndGameVisitor::visit(FieldEmpty f) {
+  checkSwap();
   listener->gameEnded(f, line->getX1(), line->getY1(), 
       line->getX2(), line->getY2());
 }
