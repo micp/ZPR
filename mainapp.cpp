@@ -6,6 +6,7 @@ MainApplication::MainApplication(const WEnvironment& env)
 {
  
   setTitle("Noughts & Crosses");  
+  useStyleSheet("css/OXGame4.css");
   session_.login().changed().connect(this, &MainApplication::authEvent);
   OXGameServer& srv = OXGameServer::getServer();
 
@@ -13,8 +14,6 @@ MainApplication::MainApplication(const WEnvironment& env)
   authW->model()->addPasswordAuth( &srv.getPasswordService());
   authW->setRegistrationEnabled(true);
   authW->processEnvironment();
-
-  // useStyleSheet("css/noughts&crosses29.css");
   gameMenu = new menu(root(), &session_);	
   gameMenu->addWidget(authW);
   gameMenu->addWidgets();

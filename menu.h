@@ -14,10 +14,7 @@ public:
   ~menu();
   void logInButton();
   void logOutButton();
-  void createAccountButton();
   void backMenuButton();
-  void backAccountButton();
-  void accountCreated();
   void addWidgets();
   void setUserName(std::string user_name) { menu_->setUserName(user_name);}
 private:

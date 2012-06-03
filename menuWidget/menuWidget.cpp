@@ -33,6 +33,7 @@ menuWidget::menuWidget(WContainerWidget * parent, Session * session_tmp) : WCont
 	sessionID = WApplication::instance()->sessionId();
 WApplication::instance()->enableUpdates();
 ///////////////////////////////////////////////////////////////////
+  setStyleClass("gamesAvailable");
   setContentAlignment(AlignCenter);
   session_ = session_tmp;
   gamesConnector = &GamesConnector::getInstance();

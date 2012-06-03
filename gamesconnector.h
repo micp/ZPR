@@ -1,10 +1,17 @@
 #ifndef __GAMESCONNECTORH__
 #define __GAMESCONNECTORH__
-
+#include <Wt/WServer>
 #include <boost/interprocess/sync/scoped_lock.hpp>
 #include <boost/interprocess/sync/interprocess_mutex.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/bind.hpp>
+
+#include <Wt/Dbo/Types>
+#include <Wt/Dbo/Dbo>
+#include <Wt/WGlobal>
+#include <Wt/Dbo/WtSqlTraits>
+#include <Wt/Dbo/Impl>
+#include <Wt/Auth/Dbo/AuthInfo>
 
 #include <iterator>
 #include <set>
@@ -195,6 +202,7 @@ public:
 	virtual std::string& getUserName() { return name_; }
 	virtual std::string& getSessionID() { static std::string s; return s; }
 
+	virtual Session * getSession() { return NULL; }
 protected:
 	virtual	void refreshGameList() {}
 };
