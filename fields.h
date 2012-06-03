@@ -4,7 +4,6 @@
 class FieldX;
 class FieldO;
 class FieldEmpty;
-//TODO temp:
 class EndOfGameListener;
 #include "endofgamelistener.h"
 
@@ -24,8 +23,8 @@ class FieldX: public Field {
   public:
     FieldX() {};
     FieldX(const FieldX&) {};
-    Field* clone() const { return new FieldX(*this); }
-    bool taken() const { return true; }
+    Field* clone() const;
+    bool taken() const;
     void accept(FieldVisitor& fv);
 };
 
@@ -33,8 +32,8 @@ class FieldO: public Field {
   public:
     FieldO() {};
     FieldO(const FieldO&) {};
-    Field* clone() const { return new FieldO(*this); }
-    bool taken() const { return true; }
+    Field* clone() const;
+    bool taken() const;
     void accept(FieldVisitor& fv);
 };
 
@@ -42,8 +41,8 @@ class FieldEmpty: public Field {
   public:
     FieldEmpty() {};
     FieldEmpty(const FieldEmpty&) {};
-    Field* clone() const { return new FieldEmpty(*this); }
-    bool taken() const { return false; }
+    Field* clone() const;
+    bool taken() const;
     void accept(FieldVisitor& fv);
 };
 
@@ -73,4 +72,5 @@ class FieldTypeVisitor : public FieldVisitor {
   private:
     char result;
 };
+//#include "endofgamelistener.h"
 #endif
