@@ -1,0 +1,26 @@
+.myStyle table {
+    border-style: solid;
+    border-color: #008080;
+    border-width: 2px;
+    padding: 15px;   
+}
+
+.myStyle th
+{
+   border-style: solid;
+   border-color:#008080;
+   border-width: 2px;
+}
+
+.myStyle td
+{
+  border-style:dotted;
+  border-color:#008080;
+  border-width:1px;
+}
+
+body
+{
+background-image:url('water.jpg');
+background-size: cover;
+} 
