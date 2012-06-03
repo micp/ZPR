@@ -41,9 +41,11 @@ BOOST_AUTO_TEST_CASE( Reset_test ) {
 
 BOOST_AUTO_TEST_CASE( Out_of_moves_test ) {
   OXGame game;
+  //GameListRefresher ref;
+  //Game tmp_game(ref);
   FieldX fx;
   FieldO fo;
-  TestEndOfGameListener l;
+  TestEndOfGameListener l(NULL/*&tmp_game*/);
   game.addEndOfGameListener(l);
   for(int i = 0; i < 15; ++i)
     for(int j = 0; j < 15; ++j) {
@@ -65,54 +67,58 @@ BOOST_AUTO_TEST_CASE( Out_of_moves_test ) {
 
 BOOST_AUTO_TEST_CASE( Game_victory_test ) {
   OXGame game;
+  //Game tmp_game;
   FieldX fx;
   FieldO fo;
-  TestEndOfGameListener l[8];
+  TestEndOfGameListener *l[8];
+  for(int i = 0; i < sizeof(l) / sizeof(TestEndOfGameListener *); i++) {
+    l[i] = new TestEndOfGameListener(NULL/*&tmp_game*/);
+  }
 
-  game.addEndOfGameListener(l[0]);
-  game.addEndOfGameListener(l[1]);
+  game.addEndOfGameListener(*l[0]);
+  game.addEndOfGameListener(*l[1]);
   for(int i = 0; i < 5; ++i) {
-    BOOST_CHECK_EQUAL( l[0].calledBy(), 'u' );
-    BOOST_CHECK_EQUAL( l[1].calledBy(), 'u' );
+    BOOST_CHECK_EQUAL( l[0]->calledBy(), 'u' );
+    BOOST_CHECK_EQUAL( l[1]->calledBy(), 'u' );
     game.put(fx, 0, i);
   }
-  BOOST_CHECK_EQUAL( l[0].calledBy(), 'x' );
-  BOOST_CHECK_EQUAL( l[1].calledBy(), 'x' );
+  BOOST_CHECK_EQUAL( l[0]->calledBy(), 'x' );
+  BOOST_CHECK_EQUAL( l[1]->calledBy(), 'x' );
   game.resetGame();
 
-  game.addEndOfGameListener(l[2]);
+  game.addEndOfGameListener(*l[2]);
   for(int i = 0; i < 5; ++i) {
-    BOOST_CHECK_EQUAL( l[2].calledBy(), 'u' );
+    BOOST_CHECK_EQUAL( l[2]->calledBy(), 'u' );
     game.put(fo, i, 0);
   }
-  BOOST_CHECK_EQUAL( l[2].calledBy(), 'o' );
+  BOOST_CHECK_EQUAL( l[2]->calledBy(), 'o' );
   game.resetGame();
 
-  game.addEndOfGameListener(l[3]);
+  game.addEndOfGameListener(*l[3]);
   for(int i = 5; i < 10; ++i) {
-    BOOST_CHECK_EQUAL( l[3].calledBy(), 'u' );
+    BOOST_CHECK_EQUAL( l[3]->calledBy(), 'u' );
     game.put(fx, i, i);
   }
-  BOOST_CHECK_EQUAL( l[3].calledBy(), 'x' );
+  BOOST_CHECK_EQUAL( l[3]->calledBy(), 'x' );
   game.resetGame();
 
-  game.addEndOfGameListener(l[4]);
+  game.addEndOfGameListener(*l[4]);
   for(int i = 5; i < 10; ++i) {
-    BOOST_CHECK_EQUAL( l[4].calledBy(), 'u' );
+    BOOST_CHECK_EQUAL( l[4]->calledBy(), 'u' );
     game.put(fx, 10-i, 10-i);
   }
-  BOOST_CHECK_EQUAL( l[4].calledBy(), 'x' );
+  BOOST_CHECK_EQUAL( l[4]->calledBy(), 'x' );
   game.resetGame();
 
-  game.addEndOfGameListener(l[5]);
+  game.addEndOfGameListener(*l[5]);
   for(int i = 5; i < 10; ++i) {
-    BOOST_CHECK_EQUAL( l[5].calledBy(), 'u' );
+    BOOST_CHECK_EQUAL( l[5]->calledBy(), 'u' );
     game.put(fx, i, 10 - i);
   }
-  BOOST_CHECK_EQUAL( l[5].calledBy(), 'x' );
+  BOOST_CHECK_EQUAL( l[5]->calledBy(), 'x' );
   game.resetGame();
 
-  game.addEndOfGameListener(l[6]);
+  game.addEndOfGameListener(*l[6]);
   int tab[5][2];
   tab[0][0] = 0;
   tab[0][1] = 0;
@@ -125,13 +131,13 @@ BOOST_AUTO_TEST_CASE( Game_victory_test ) {
   tab[4][0] = 1;
   tab[4][1] = 0;
   for(int i = 0; i < 5; ++i) {
-    BOOST_CHECK_EQUAL( l[6].calledBy(), 'u' );
+    BOOST_CHECK_EQUAL( l[6]->calledBy(), 'u' );
     game.put(fx, tab[i][0], tab[i][1]);
   }
-  BOOST_CHECK_EQUAL( l[6].calledBy(), 'x' );
+  BOOST_CHECK_EQUAL( l[6]->calledBy(), 'x' );
   game.resetGame();
 
-  game.addEndOfGameListener(l[7]);
+  game.addEndOfGameListener(*l[7]);
   tab[0][0] = 1;
   tab[0][1] = 1;
   tab[1][0] = 2;
@@ -143,10 +149,10 @@ BOOST_AUTO_TEST_CASE( Game_victory_test ) {
   tab[4][0] = 0;
   tab[4][1] = 0;
   for(int i = 0; i < 5; ++i) {
-    BOOST_CHECK_EQUAL( l[7].calledBy(), 'u' );
+    BOOST_CHECK_EQUAL( l[7]->calledBy(), 'u' );
     game.put(fx, tab[i][0], tab[i][1]);
   }
-  BOOST_CHECK_EQUAL( l[7].calledBy(), 'x' );
+  BOOST_CHECK_EQUAL( l[7]->calledBy(), 'x' );
   game.resetGame();
   //maybe more patterns / mixed patterns here?
 }

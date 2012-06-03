@@ -8,7 +8,7 @@
 
 class TestEndOfGameListener : public EndOfGameListener {
   public:
-    TestEndOfGameListener() : callee('u') {}
+    TestEndOfGameListener(Game* game) : EndOfGameListener(game), callee('u') {}
     void gameEnded(FieldX f) {
       FieldTypeVisitor v;
       f.accept(v);
