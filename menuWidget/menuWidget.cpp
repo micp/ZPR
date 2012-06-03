@@ -33,7 +33,6 @@ menuWidget::menuWidget(WContainerWidget * parent, Session * session_tmp) : WCont
 	sessionID = WApplication::instance()->sessionId();
 WApplication::instance()->enableUpdates();
 ///////////////////////////////////////////////////////////////////
-  //setStyleClass("gamesAvailable");
   setContentAlignment(AlignCenter);
   session_ = session_tmp;
   gamesConnector = &GamesConnector::getInstance();
@@ -588,6 +587,43 @@ void menuWidget::endedWithWin(int a, int b, int c, int d)
   {
     it->second->disable();
   }
+  if(a == c)
+  {
+    while(b!=d)
+    {
+      gameButtons[Coordinates(a,b)]->setIcon("/black.png");
+      b++;
+    }
+  }
+  else if (b == d)
+  {
+    while(a!=c)
+    {
+      gameButtons[Coordinates(a,b)]->setIcon("/black.png");
+      a++;
+    }
+  }
+  else
+  {
+    if(a<c)
+    {
+      while (a!=c && b!=d)
+      {
+        gameButtons[Coordinates(a,b)]->setIcon("/black.png");
+        a++;
+        b++;
+      }
+    }
+    else
+    {
+      while( a!=c && b!=d)
+      {
+       gameButtons[Coordinates(a,b)]->setIcon("/black.png");
+       a--;
+       b--;
+      }
+    }
+  }
   app->triggerUpdate();
 }
 
@@ -601,10 +637,7 @@ void menuWidget::endedWithDraw(int a, int b, int c, int d)
   endGame->enable();
   revenge->enable(); 
   map<Coordinates,WPushButton*>::iterator it;
-  for(it = gameButtons.begin(); it != gameButtons.end();it++)
-  {
-    it->second->disable();
-  }
+
   app->triggerUpdate();
 }
 
@@ -622,6 +655,45 @@ void menuWidget::endedWithLose(int a, int b, int c, int d)
   {
     it->second->disable();
   }
+  if(a == c)
+  {
+    while(b!=d)
+    {
+      gameButtons[Coordinates(a,b)]->setIcon("/black.png");
+      b++;
+    }
+  }
+  else if (b == d)
+  {
+    while(a!=c)
+    {
+      gameButtons[Coordinates(a,b)]->setIcon("/black.png");
+      a++;
+    }
+  }
+  else
+  {
+    if(a<c)
+    {
+      while (a!=c && b!=d)
+      {
+        gameButtons[Coordinates(a,b)]->setIcon("/black.png");
+        a++;
+        b++;
+      }
+    }
+    else
+    {
+      while( a!=c && b!=d)
+      {
+       gameButtons[Coordinates(a,b)]->setIcon("/black.png");
+       a--;
+       b--;
+      }
+    }
+  }
+  
+  
   app->triggerUpdate();
 }
 
