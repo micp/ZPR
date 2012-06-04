@@ -122,7 +122,11 @@ OXGame::CheckIterator& OXGame::CheckIterator::operator++() {
       int prevy = cury;
       curx = x;
       cury = y;
-      if(reverseCheck()) reverseIncrement();
+      if(reverseCheck()) {
+	reverseIncrement();
+	x2 = curx;
+	y2 = cury;
+      }
       else {
 	curx = prevx;
 	cury = prevy;
