@@ -469,10 +469,10 @@ void menuWidget::gameStarted()
 void menuWidget::fieldChanged( FieldX &f , int x , int y )
 {
   WApplication *app = WApplication::instance();
-  gameButtons[Coordinates(x,y)]->setIcon(WLink("/cross.png"));
   ifCreator = !ifCreator;
   if(!gameEnded)
   {
+  gameButtons[Coordinates(x,y)]->setIcon(WLink("/cross.png"));
   if(ifCreator) 
    information->setText("It's your turn");   
   else information->setText("Waiting for opponent move");
@@ -483,11 +483,11 @@ void menuWidget::fieldChanged( FieldX &f , int x , int y )
 void menuWidget::fieldChanged( FieldO &f, int x, int y )
 {
   WApplication *app = WApplication::instance();
-  gameButtons[Coordinates(x,y)]->setIcon(WLink("/circle.png"));
   gameButtons[Coordinates(x,y)]->disable();
   ifCreator = !ifCreator;
   if(!gameEnded)
   {
+  gameButtons[Coordinates(x,y)]->setIcon(WLink("/circle.png"));
   if(ifCreator)
     information->setText("It's your turn");
   else information->setText("Waiting for opponent move");
@@ -570,11 +570,11 @@ void menuWidget::playerJoined()
   std::cout<<" MOJ "<<(GameListRefresher*)this<<std::endl;
   startGame->enable();
   startGame->refresh();
-	app->triggerUpdate();
-} 
+  app->triggerUpdate();
+  } 
 
-void menuWidget::endedWithWin(int a, int b, int c, int d)
-{
+  void menuWidget::endedWithWin(int a, int b, int c, int d)
+  {
   WApplication *app = WApplication::instance();
   std::cout<<"ENDED WITH WIN"<<std::endl;
   gameEnded = true;
@@ -585,21 +585,22 @@ void menuWidget::endedWithWin(int a, int b, int c, int d)
   map<Coordinates,WPushButton*>::iterator it;
   for(it = gameButtons.begin(); it != gameButtons.end();it++)
   {
-    it->second->disable();
+  it->second->disable();
   }
   if(a == c)
   {
-    while(b!=d)
+    std::cout<<"ROZNICA "<<d-b<<std::endl;
+    while(b<=d)
     {
-      gameButtons[Coordinates(a,b)]->setIcon("/black.png");
-      b++;
+    gameButtons[Coordinates(a,b)]->setIcon("/win.jpg");
+    b++;
     }
   }
   else if (b == d)
   {
-    while(a!=c)
-    {
-      gameButtons[Coordinates(a,b)]->setIcon("/black.png");
+  while(a<=c)
+  {
+    gameButtons[Coordinates(a,b)]->setIcon("/win.jpg");
       a++;
     }
   }
@@ -607,18 +608,18 @@ void menuWidget::endedWithWin(int a, int b, int c, int d)
   {
     if(a<c)
     {
-      while (a!=c && b!=d)
+      while (a<=c && b<=d)
       {
-        gameButtons[Coordinates(a,b)]->setIcon("/black.png");
+        gameButtons[Coordinates(a,b)]->setIcon("/win.jpg");
         a++;
         b++;
       }
     }
     else
     {
-      while( a!=c && b!=d)
+      while( a>=c && b>=d)
       {
-       gameButtons[Coordinates(a,b)]->setIcon("/black.png");
+       gameButtons[Coordinates(a,b)]->setIcon("/win.jpg");
        a--;
        b--;
       }
@@ -657,17 +658,17 @@ void menuWidget::endedWithLose(int a, int b, int c, int d)
   }
   if(a == c)
   {
-    while(b!=d)
+    while(b<=d)
     {
-      gameButtons[Coordinates(a,b)]->setIcon("/black.png");
+      gameButtons[Coordinates(a,b)]->setIcon("/win.jpg");
       b++;
     }
   }
   else if (b == d)
   {
-    while(a!=c)
+    while(a<=c)
     {
-      gameButtons[Coordinates(a,b)]->setIcon("/black.png");
+      gameButtons[Coordinates(a,b)]->setIcon("/win.jpg");
       a++;
     }
   }
@@ -675,18 +676,18 @@ void menuWidget::endedWithLose(int a, int b, int c, int d)
   {
     if(a<c)
     {
-      while (a!=c && b!=d)
+      while (a<=c && b<=d)
       {
-        gameButtons[Coordinates(a,b)]->setIcon("/black.png");
+        gameButtons[Coordinates(a,b)]->setIcon("/win.jpg");
         a++;
         b++;
       }
     }
     else
     {
-      while( a!=c && b!=d)
+      while( a>=c && b>=d)
       {
-       gameButtons[Coordinates(a,b)]->setIcon("/black.png");
+       gameButtons[Coordinates(a,b)]->setIcon("/win.jpg");
        a--;
        b--;
       }
