@@ -246,8 +246,6 @@ void menuWidget::processShowGamesButton()
   gamesAvailable->elementAt(0,0)->addWidget(new WText("List of all available games:"));
    //preparing whole "scene" (nothing interesting above)
   
-  //TODO get data from the database. By now I just add some random values
-  //Some loop gonna be necessary here
   int i = 1;
   gamesConnector->iterationBegin();
   GamesConnector::const_iterator cit = gamesConnector->begin();
@@ -278,17 +276,12 @@ void menuWidget::processStartGameButton()
 {
     information->setText("Waiting for the opponent to start the game"); 
     startGame->disable();
-    //endGame->disable();
-    //giveUp->enable();
     map<Coordinates,WPushButton*>::iterator it;
     gamePointer->start(*this);
 }
 
 void menuWidget::processChooseGameButton(WPushButton *b)
 {
-  //stuff that requires database connection
-  //if everything's fine, database return info (let's say "true")
-  //and we can proceed
    information->setText("Press start game");
   endConnection->show();
   showGames->disable();
@@ -319,7 +312,6 @@ void menuWidget::processChooseGameButton(WPushButton *b)
   everything->clear();
   delete everything;
   everything = new WTable(this);
-  //everything->setStyleClass("myStyle");
   for(int i = 0; i<SIZE; i++)
   {
     for(int j = 0; j<SIZE; j++){
@@ -327,7 +319,6 @@ void menuWidget::processChooseGameButton(WPushButton *b)
       newButton->resize(35,35); //images are 30x30, just in case
       newButton->disable();
       newButton->setVerticalAlignment(Wt::AlignMiddle);
-      //newButton->setIcon(WLink("/white.jpg"));
       newButton->clicked().connect(boost::bind(&menuWidget::processClickButton,this,newButton,i,j));
       everything->elementAt(i,j)->addWidget(newButton);
       gameButtons.insert(make_pair(Coordinates(j,i),newButton));
@@ -347,9 +338,7 @@ void menuWidget::processChooseGameButton(WPushButton *b)
     it->first->hide();
   }
   
-  //making all join buttons unavailable to touch
   
-  //TODO Send the info to the database about which game was chosen
 
 }
 
