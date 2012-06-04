@@ -9,9 +9,7 @@
 #include <Wt/WLineEdit>
 #include <iostream>
 #include "menu.h"
-#include "loginWidget/loginWidget.h"
 #include "menuWidget/menuWidget.h"
-#include "accountWidget/accountWidget.h"
 
 using namespace Wt;
 
@@ -39,13 +37,10 @@ void menu::backMenuButton()
 menu::menu(WContainerWidget *parent, Session * session_tmp) : WContainerWidget(parent)
 {
   setContentAlignment(AlignCenter);
-//  setStyleClass("gamesAvailable");
   session_ = session_tmp;
   title = new WText("Noughts & Crosses");
   title->decorationStyle().font().setSize(20);
   addWidget(title);
-  //menu_ = new menuWidget(this);
-  //menu_->hide();
 }
 
 void menu::addWidgets()

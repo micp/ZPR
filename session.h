@@ -22,34 +22,40 @@ typedef Auth::Dbo::UserDatabase<AuthInfo> UserDatabase;
  */
 class UserNotLoggedInException{};
 
-//This class represents one sesion with database
-//example of it's usage may be found in authapp class
+/**This class represents one sesion with database
+*/
 class Session: public Dbo::Session
 {
 public:
 	Session(const std::string &dbName );
 
 	~Session() { delete db_; }
-
+	/** This functions returns abstraction of data base */
 	Auth::AbstractUserDatabase& users() { return *db_; }
-
+	/** This functions returns login object */	
 	Auth::Login& login() { return login_; }
 
 	//functions for getting and setting some informations about currently logged user
+	/** Returns name of currently logged user */
 	std::string getUserName() ;
-
+	
+	/** Returns score of currently logged user */
 	int getUserScore();
 
+	/** Sets score of currently logged user */
 	void setScore( int score );
 	
+	/** Updates score of currently logged user */
 	void updateScore( int to_add );
 
+	/**What is the position  of currently logged user */
 	int getUserRanking();
 
-	//function connected with players ranking
+	/**Returns vector of top how_many players */
 	std::vector<User> getHigestRankUsers( int how_many );
 
 private:
+	/** Allows to access pointer to record from data base */
 	Wt::Dbo::ptr<User> getUser();
 	Dbo::backend::Sqlite3 connection_;
 	Auth::Login login_;

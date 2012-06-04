@@ -1,5 +1,6 @@
 #ifndef __WINNING_LINEH__
 #define __WINNING_LINEH__
+/** Used for finding winning line*/
 class WinningLine {
   public:
     WinningLine() : x1(0), x2(0), y1(0), y2(0) {}

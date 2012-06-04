@@ -128,9 +128,9 @@ OXGame::CheckIterator& OXGame::CheckIterator::operator++() {
 	y2 = cury;
       }
       else {
-	curx = prevx;
-	cury = prevy;
-	side = 2;
+curx = prevx;
+cury = prevy;
+side = 2;
       }
     }
   }
@@ -184,34 +184,34 @@ bool OXGame::CheckIterator::operator!=(const OXGame::CheckIterator& c) const {
   return curx != c.getCurX() || cury != c.getCurY();
 }
 bool OXGame::HorizCheckIterator::check() {
-  return curx+1 < size && 
+  return curx+1 < size &&
     game->getFieldType(curx+1, cury) == myType;
 }
 bool OXGame::HorizCheckIterator::reverseCheck() {
-  return curx-1 >= 0 && 
+  return curx-1 >= 0 &&
     game->getFieldType(curx-1, cury) == myType;
 }
 bool OXGame::VertCheckIterator::check() {
-  return cury+1 < size && 
+  return cury+1 < size &&
     game->getFieldType(curx, cury+1) == myType;
 }
 bool OXGame::VertCheckIterator::reverseCheck() {
-  return cury-1 >= 0 && 
+  return cury-1 >= 0 &&
     game->getFieldType(curx, cury-1) == myType;
 }
 bool OXGame::SlashCheckIterator::check() {
-  return curx+1 < size && cury+1 < size && 
+  return curx+1 < size && cury+1 < size &&
     game->getFieldType(curx+1, cury+1) == myType;
 }
 bool OXGame::SlashCheckIterator::reverseCheck() {
-  return curx-1 >= 0 && cury-1 >= 0 && 
+  return curx-1 >= 0 && cury-1 >= 0 &&
     game->getFieldType(curx-1, cury-1) == myType;
 }
 bool OXGame::BackslashCheckIterator::check() {
-  return curx-1 >= 0 && cury+1 < size && 
+  return curx-1 >= 0 && cury+1 < size &&
     game->getFieldType(curx-1, cury+1) == myType;
 }
 bool OXGame::BackslashCheckIterator::reverseCheck() {
-  return curx+1 < size && cury-1 >= 0 && 
+  return curx+1 < size && cury-1 >= 0 &&
     game->getFieldType(curx+1, cury-1) == myType;
 }

@@ -1,28 +1,4 @@
 #include "menuWidget.h"
-#include "../user.h"
-#include <boost/lexical_cast.hpp>
-#include <Wt/WText>
-#include <Wt/WPushButton>
-#include <Wt/WBreak>
-#include <Wt/WLineEdit>
-#include <Wt/WTable>
-#include <Wt/WTableCell>
-#include <Wt/WString>
-#include <Wt/WAnchor>
-#include <Wt/WStackedWidget>
-#include <Wt/WHBoxLayout>
-#include <Wt/WApplication>
-#include <Wt/WInteractWidget>
-#include <Wt/WEvent>
-#include <Wt/WCompositeWidget>
-#include <Wt/WLink>
-#include <Wt/Ext/Button>
-#include <Wt/WFont>
-
-#include <iterator>
-#include <string>
-#include <vector>
-#include <map>
 using namespace Wt;
 using namespace std;
 menuWidget::menuWidget(WContainerWidget * parent, Session * session_tmp) : WContainerWidget(parent)
@@ -65,11 +41,9 @@ WApplication::instance()->enableUpdates();
   addWidget(endConnection);
   gamesAvailable = new WTable(this);
   gamesAvailable->setStyleClass("gamesAvailable");
-  //gamesAvailable->setStyleClass("myStyle");
   addWidget(gamesAvailable);
 
   everything = new WTable(this);
-  //everything->setStyleClass("myStyle");
   
   
   success = new WText("Game created correctly. Click \"Start Game \" to begin.");
@@ -208,7 +182,6 @@ void menuWidget::processCreateNewGameButton(WPushButton *b)
       newButton->resize(35,35); //images are 30x30, just in case
       newButton->disable();
       newButton->setVerticalAlignment(Wt::AlignMiddle);
-      //newButton->setIcon(WLink("/white.jpg"));
       newButton->clicked().connect(boost::bind(&menuWidget::processClickButton,this,newButton,i,j));
       everything->elementAt(i,j)->addWidget(newButton);
       gameButtons.insert(make_pair(Coordinates(j,i),newButton));
@@ -230,7 +203,6 @@ void menuWidget::processCreateNewGameButton(WPushButton *b)
 void menuWidget::processShowGamesButton()
 {
   information->setText("");
-  std::cout<<"POCZATEK SHOW GAMES"<<std::endl;
   highScoresButton->hide();
   showGames->disable();
   newGameButton->disable();
@@ -246,8 +218,6 @@ void menuWidget::processShowGamesButton()
   gamesAvailable->elementAt(0,0)->addWidget(new WText("List of all available games:"));
    //preparing whole "scene" (nothing interesting above)
   
-  //TODO get data from the database. By now I just add some random values
-  //Some loop gonna be necessary here
   int i = 1;
   gamesConnector->iterationBegin();
   GamesConnector::const_iterator cit = gamesConnector->begin();
@@ -260,17 +230,14 @@ void menuWidget::processShowGamesButton()
     btn->clicked().connect(boost::bind(&menuWidget::processChooseGameButton,this,btn));
     gamesAvailable->elementAt(i,1)->addWidget(btn);
     joinButtons.push_back(std::make_pair(btn,cit)); //vector of join buttons
-    std::cout<<"ITERACJA"<<std::endl;
     i++;
   }  
-  std::cout<<"PO ITERACJI"<<std::endl;
   gamesConnector->iterationEnd();
   gamesConnector->refRegister(*this); 
   
   WPushButton * hideGames = new WPushButton("Hide games list");
   hideGames->clicked().connect(boost::bind(&menuWidget::processHideListButton,this));
   gamesAvailable->elementAt(i,0)->addWidget(hideGames);
-	std::cout<<"WYCHODZE"<<std::endl;
 }  
 
 
@@ -278,17 +245,12 @@ void menuWidget::processStartGameButton()
 {
     information->setText("Waiting for the opponent to start the game"); 
     startGame->disable();
-    //endGame->disable();
-    //giveUp->enable();
     map<Coordinates,WPushButton*>::iterator it;
     gamePointer->start(*this);
 }
 
 void menuWidget::processChooseGameButton(WPushButton *b)
 {
-  //stuff that requires database connection
-  //if everything's fine, database return info (let's say "true")
-  //and we can proceed
    information->setText("Press start game");
   endConnection->show();
   showGames->disable();
@@ -319,7 +281,6 @@ void menuWidget::processChooseGameButton(WPushButton *b)
   everything->clear();
   delete everything;
   everything = new WTable(this);
-  //everything->setStyleClass("myStyle");
   for(int i = 0; i<SIZE; i++)
   {
     for(int j = 0; j<SIZE; j++){
@@ -327,7 +288,6 @@ void menuWidget::processChooseGameButton(WPushButton *b)
       newButton->resize(35,35); //images are 30x30, just in case
       newButton->disable();
       newButton->setVerticalAlignment(Wt::AlignMiddle);
-      //newButton->setIcon(WLink("/white.jpg"));
       newButton->clicked().connect(boost::bind(&menuWidget::processClickButton,this,newButton,i,j));
       everything->elementAt(i,j)->addWidget(newButton);
       gameButtons.insert(make_pair(Coordinates(j,i),newButton));
@@ -347,9 +307,7 @@ void menuWidget::processChooseGameButton(WPushButton *b)
     it->first->hide();
   }
   
-  //making all join buttons unavailable to touch
   
-  //TODO Send the info to the database about which game was chosen
 
 }
 
@@ -357,11 +315,8 @@ void menuWidget::processClickButton(WPushButton *b, int i, int j)
 {
   //IMPORTANT PLACE
   //Send the info to the database that button has been clicked
-  //change the image depends on who made a move
-  //by now it is just - one time cross, one time circle
   gamePointer->putField(*this,j,i);
   success->hide();
-  //b->disable();
 }
 
 void menuWidget::processHideListButton()
@@ -389,7 +344,6 @@ void menuWidget::processEndGameButton()
   everything->clear();
   delete everything;
   everything = new WTable(this);
-  //everything->setStyleClass("myStyle");
   success->hide();
   newGameButton->show();
   newGameButton->enable();
@@ -421,7 +375,6 @@ void menuWidget::processRevengeButton(WPushButton * b)
     everything->clear();
     delete everything;
     everything = new WTable(this);
-    //everything->setStyleClass("myStyle");
     for(int i = 0; i<SIZE; i++)
     {
     for(int j = 0; j<SIZE; j++){
@@ -429,7 +382,6 @@ void menuWidget::processRevengeButton(WPushButton * b)
       newButton->disable();
       newButton->resize(35,35); //images are 30x30, just in case
       newButton->setVerticalAlignment(Wt::AlignMiddle);
-      //newButton->setIcon(WLink("/white.jpg"));
       newButton->clicked().connect(boost::bind(&menuWidget::processClickButton,this,newButton,i,j));
       everything->elementAt(i,j)->addWidget(newButton);
       gameButtons.insert(make_pair(Coordinates(j,i),newButton));
@@ -440,7 +392,6 @@ void menuWidget::processRevengeButton(WPushButton * b)
   addWidget(endGame);
   addWidget(giveUp);
   addWidget(revenge);
-  //loop is almost exactly the same as in processStartGameButton
   //we need to clear all modifications that was made on the game Buttons
   
 }
@@ -448,7 +399,6 @@ void menuWidget::processRevengeButton(WPushButton * b)
 void menuWidget::gameStarted()
 {
   WApplication * app = WApplication::instance();
-  std::cout<<"GAME STARTED"<<std::endl;
   gameEnded = false;
   if(ifCreator) 
   {
@@ -506,7 +456,6 @@ void menuWidget::wonByGivingUp()
     it->second->disable();
   }
   app->triggerUpdate();
-  std::cout<<"WON BY GIVING UP"<<std::endl;
 }
 
 void menuWidget::playerExited()
@@ -529,7 +478,6 @@ void menuWidget::revengeProposed()
     everything->clear();
     delete everything;
     everything = new WTable(this);
-    //everything->setStyleClass("myStyle");
     for(int i = 0; i<SIZE; i++)
     {
     for(int j = 0; j<SIZE; j++){
@@ -537,7 +485,6 @@ void menuWidget::revengeProposed()
       newButton->disable();
       newButton->resize(35,35); //images are 30x30, just in case
       newButton->setVerticalAlignment(Wt::AlignMiddle);
-      //newButton->setIcon(WLink("/white.jpg"));
       newButton->clicked().connect(boost::bind(&menuWidget::processClickButton,this,newButton,i,j));
       everything->elementAt(i,j)->addWidget(newButton);
       gameButtons.insert(make_pair(Coordinates(j,i),newButton));
@@ -565,7 +512,6 @@ void menuWidget::playerJoined()
 {
 	WApplication *app = WApplication::instance();
   information->setText("Opponent connected. Press start to begin");
-  std::cout<<" MOJ "<<(GameListRefresher*)this<<std::endl;
   startGame->enable();
   startGame->refresh();
   app->triggerUpdate();
@@ -574,7 +520,6 @@ void menuWidget::playerJoined()
   void menuWidget::endedWithWin(int a, int b, int c, int d)
   {
   WApplication *app = WApplication::instance();
-  std::cout<<"ENDED WITH WIN"<<std::endl;
   gameEnded = true;
   information->setText("You won!!!");
   giveUp->disable();
@@ -587,7 +532,6 @@ void menuWidget::playerJoined()
   }
   if(a == c)
   {
-    std::cout<<"ROZNICA "<<d-b<<std::endl;
     while(b<=d)
     {
     gameButtons[Coordinates(a,b)]->setIcon("/win.jpg");
@@ -629,7 +573,6 @@ void menuWidget::playerJoined()
 void menuWidget::endedWithDraw(int a, int b, int c, int d)
 {
   WApplication *app = WApplication::instance();
-  std::cout<<"ENDED WITH DRAW"<<std::endl;
   information->setText("Ended with draw");
   gameEnded = true;
   giveUp->disable();
@@ -644,7 +587,6 @@ void menuWidget::endedWithLose(int a, int b, int c, int d)
 {
   WApplication *app = WApplication::instance();
   information->setText("You loosed!");
-  std:cout<<"ENDED WITH LOSE"<<std::endl;
   gameEnded = true;
   giveUp->disable();
   endGame->enable();
