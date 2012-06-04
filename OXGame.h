@@ -64,27 +64,85 @@ class OXGame {
     typedef boost::multi_array<Field*, 2> MapArray;
     typedef std::set<EndOfGameListener *> ListenerSet;
 
+    /** Winning line check iterator interface.
+     * Abstract class defining constraints on line checking iterators.
+     */
     class CheckIterator;
+    /** Horizontal check iterator.
+     * Checks horizontally for winning line.
+     */
     class HorizCheckIterator;
+    /** Vertical check iterator.
+     * Checks vertically for winning line.
+     */
     class VertCheckIterator;
+    /** Diagonal check iterator.
+     * Checks diagonally (/) for winning line.
+     */
     class SlashCheckIterator;
+    /** Opposite diagonal check iterator.
+     * Checks diagonally (\) for winning line.
+     */
     class BackslashCheckIterator;
 
+    /** A pointer to the game field.
+     * Point to two dimensional boost::multi_array containing all information
+     * about the current state of the game field.
+     */
     MapArray *fields_;  
+    /** Set containing all registered listeners;
+     * Contains pointers to all listeners registered with the game.
+     */
     ListenerSet listeners_;
+    /** Game field size.
+     */
     int size_;
+    /** Winning line length.
+     * Defines how long a line needs to be to be considered a winning line.
+     */
     int winningLineLength;
+    /** Number of taken fields.
+     * Used to determine stalemate.
+     */
     int fieldsTaken;
+    /** True if game has ended.
+     * resetGame() switches this back to false.
+     */
     bool gameEnded;
 
+    /** Notifies all registered listeners when game ends.
+     * f type determines who won (when FieldX or FieldY) or represents a 
+     * stalemate (when FieldEmpty). line holds opposite ends of the winning 
+     * line. If stalemate line points to (0,0) and (size_, size_).
+     */
     void notifyEndOfGame(Field& f, WinningLine& line);
+    /** Finishes the game.
+     * Used after the game has ended.
+     */
     void endGame();
+    /** Determines whether a specified Field type considers itself taken.
+     */
     bool taken(const Field& f);
+    /** Searches for a winning line.
+     * First argument determines at which angle are we searching. Second 
+     * specifies where to save the winning line's coordinates, should we find
+     * it.
+     */
     bool checkLine(CheckIterator& it, WinningLine& line);
+    /** Constructs HorizCheckIterator at specified coordinates.
+     */
     HorizCheckIterator getHorizCheckIterator(int x, int y);
+    /** Constructs VertCheckIterator at specified coordinates.
+     */
     VertCheckIterator getVertCheckIterator(int x, int y);
+    /** Constructs SlashCheckIterator at specified coordinates.
+     */
     SlashCheckIterator getSlashCheckIterator(int x, int y);
+    /** Constructs BackslashCheckIterator at specified coordinates.
+     */
     BackslashCheckIterator getBackslashCheckIterator(int x, int y);
+    /** Returns the type of field at (x, y).
+     */
     char getFieldType(int x, int y) const;
 };
 
@@ -93,7 +151,15 @@ class OXGame {
 
 class OXGame::CheckIterator {
   public:
+    /** CheckIterator constructor.
+     * Constructs CheckIterator pointing to field at nx, ny coordinates
+     * withing the provided game.
+     */
     CheckIterator(const OXGame& ngame, int nx, int ny);
+    /** Advance the iterator.
+     * The main function of the class. Advances the iterator by one step.
+     * Stops at last possible step for the specific iterator type. 
+     */
     CheckIterator& operator++();
     bool operator!=(const CheckIterator& c) const;
     virtual bool hasNext() = 0;
