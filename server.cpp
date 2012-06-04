@@ -119,8 +119,9 @@ int main(int argc , char** argv)
 		getline(cin , command);
 		if( command == "stop" )	server.stop();
 		else if( command == "start") server.start();
-		else if(command == "exit" ) { if(server.isRunning()) server.stop(); return 0;}
+		else if(command == "exit" ) { if(server.isRunning()) server.stop();break; }
 	}	
+	delete &OXGameServer::getServer();
 }
 
 

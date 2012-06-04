@@ -9,10 +9,7 @@
 #include <Wt/WTableCell>
 #include <Wt/WString>
 #include <Wt/WAnchor>
-#include <Wt/WAnchor>
-#include <Wt/WText>
 #include <Wt/WStackedWidget>
-#include <Wt/WVBoxLayout>
 #include <Wt/WHBoxLayout>
 #include <Wt/WApplication>
 #include <Wt/WInteractWidget>
@@ -21,6 +18,7 @@
 #include <Wt/WLink>
 #include <Wt/Ext/Button>
 #include <Wt/WFont>
+
 #include <iterator>
 #include <string>
 #include <vector>
