@@ -9,9 +9,9 @@
 #include <Wt/WLineEdit>
 #include <iostream>
 #include "menu.h"
-#include "loginWidget/loginWidget.h"
+//#include "loginWidget/loginWidget.h"
 #include "menuWidget/menuWidget.h"
-#include "accountWidget/accountWidget.h"
+//#include "accountWidget/accountWidget.h"
 
 using namespace Wt;
 

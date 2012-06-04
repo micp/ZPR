@@ -4,10 +4,32 @@
 #include <Wt/WContainerWidget>
 #include <Wt/WLabel>
 #include <Wt/WLineEdit>
+#include <boost/lexical_cast.hpp>
+#include <Wt/WText>
+#include <Wt/WPushButton>
+#include <Wt/WBreak>
+#include <Wt/WLineEdit>
+#include <Wt/WTable>
+#include <Wt/WTableCell>
+#include <Wt/WString>
+#include <Wt/WAnchor>
+#include <Wt/WStackedWidget>
+#include <Wt/WHBoxLayout>
+#include <Wt/WApplication>
+#include <Wt/WInteractWidget>
+#include <Wt/WEvent>
+#include <Wt/WCompositeWidget>
+#include <Wt/WLink>
+#include <Wt/Ext/Button>
+#include <Wt/WFont>
 
+#include <iterator>
+#include <string>
 #include <vector>
 #include <map>
 
+
+#include "../user.h"
 #include "../fields.h"
 #include "../game.h"
 #include "../gamelistrefresher.h"
@@ -15,6 +37,7 @@
 #include "../session.h"
 using namespace Wt;
 using namespace std;
+/** Main Class responsible for governing what is displayed on the screen */
 class menuWidget  : public WContainerWidget, public GameListRefresher
 {
 public:

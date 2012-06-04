@@ -11,7 +11,7 @@ src_connector = "gamesconnector.cpp "
 src_game = "fields.cpp WinningLine.cpp OXGame.cpp game.cpp endofgamelistener.cpp "
 src_game_test = "OXGame_test.cpp "
 
-src_kubik = " menuWidget/menuWidget.cpp accountWidget/accountWidget.cpp loginWidget/loginWidget.cpp menu.cpp "
+src_kubik = " menuWidget/menuWidget.cpp  menu.cpp "
 
 liby = Split('boost_signals boost_regex boost_thread wthttp wt wtdbo wtdbosqlite3 boost_unit_test_framework ');
 

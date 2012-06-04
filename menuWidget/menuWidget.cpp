@@ -1,28 +1,4 @@
 #include "menuWidget.h"
-#include "../user.h"
-#include <boost/lexical_cast.hpp>
-#include <Wt/WText>
-#include <Wt/WPushButton>
-#include <Wt/WBreak>
-#include <Wt/WLineEdit>
-#include <Wt/WTable>
-#include <Wt/WTableCell>
-#include <Wt/WString>
-#include <Wt/WAnchor>
-#include <Wt/WStackedWidget>
-#include <Wt/WHBoxLayout>
-#include <Wt/WApplication>
-#include <Wt/WInteractWidget>
-#include <Wt/WEvent>
-#include <Wt/WCompositeWidget>
-#include <Wt/WLink>
-#include <Wt/Ext/Button>
-#include <Wt/WFont>
-
-#include <iterator>
-#include <string>
-#include <vector>
-#include <map>
 using namespace Wt;
 using namespace std;
 menuWidget::menuWidget(WContainerWidget * parent, Session * session_tmp) : WContainerWidget(parent)
@@ -65,11 +41,9 @@ WApplication::instance()->enableUpdates();
   addWidget(endConnection);
   gamesAvailable = new WTable(this);
   gamesAvailable->setStyleClass("gamesAvailable");
-  //gamesAvailable->setStyleClass("myStyle");
   addWidget(gamesAvailable);
 
   everything = new WTable(this);
-  //everything->setStyleClass("myStyle");
   
   
   success = new WText("Game created correctly. Click \"Start Game \" to begin.");
@@ -208,7 +182,6 @@ void menuWidget::processCreateNewGameButton(WPushButton *b)
       newButton->resize(35,35); //images are 30x30, just in case
       newButton->disable();
       newButton->setVerticalAlignment(Wt::AlignMiddle);
-      //newButton->setIcon(WLink("/white.jpg"));
       newButton->clicked().connect(boost::bind(&menuWidget::processClickButton,this,newButton,i,j));
       everything->elementAt(i,j)->addWidget(newButton);
       gameButtons.insert(make_pair(Coordinates(j,i),newButton));
@@ -346,11 +319,8 @@ void menuWidget::processClickButton(WPushButton *b, int i, int j)
 {
   //IMPORTANT PLACE
   //Send the info to the database that button has been clicked
-  //change the image depends on who made a move
-  //by now it is just - one time cross, one time circle
   gamePointer->putField(*this,j,i);
   success->hide();
-  //b->disable();
 }
 
 void menuWidget::processHideListButton()
@@ -378,7 +348,6 @@ void menuWidget::processEndGameButton()
   everything->clear();
   delete everything;
   everything = new WTable(this);
-  //everything->setStyleClass("myStyle");
   success->hide();
   newGameButton->show();
   newGameButton->enable();
@@ -410,7 +379,6 @@ void menuWidget::processRevengeButton(WPushButton * b)
     everything->clear();
     delete everything;
     everything = new WTable(this);
-    //everything->setStyleClass("myStyle");
     for(int i = 0; i<SIZE; i++)
     {
     for(int j = 0; j<SIZE; j++){
@@ -418,7 +386,6 @@ void menuWidget::processRevengeButton(WPushButton * b)
       newButton->disable();
       newButton->resize(35,35); //images are 30x30, just in case
       newButton->setVerticalAlignment(Wt::AlignMiddle);
-      //newButton->setIcon(WLink("/white.jpg"));
       newButton->clicked().connect(boost::bind(&menuWidget::processClickButton,this,newButton,i,j));
       everything->elementAt(i,j)->addWidget(newButton);
       gameButtons.insert(make_pair(Coordinates(j,i),newButton));
@@ -429,7 +396,6 @@ void menuWidget::processRevengeButton(WPushButton * b)
   addWidget(endGame);
   addWidget(giveUp);
   addWidget(revenge);
-  //loop is almost exactly the same as in processStartGameButton
   //we need to clear all modifications that was made on the game Buttons
   
 }
@@ -518,7 +484,6 @@ void menuWidget::revengeProposed()
     everything->clear();
     delete everything;
     everything = new WTable(this);
-    //everything->setStyleClass("myStyle");
     for(int i = 0; i<SIZE; i++)
     {
     for(int j = 0; j<SIZE; j++){
@@ -526,7 +491,6 @@ void menuWidget::revengeProposed()
       newButton->disable();
       newButton->resize(35,35); //images are 30x30, just in case
       newButton->setVerticalAlignment(Wt::AlignMiddle);
-      //newButton->setIcon(WLink("/white.jpg"));
       newButton->clicked().connect(boost::bind(&menuWidget::processClickButton,this,newButton,i,j));
       everything->elementAt(i,j)->addWidget(newButton);
       gameButtons.insert(make_pair(Coordinates(j,i),newButton));
