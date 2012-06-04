@@ -137,8 +137,8 @@ OXGame::CheckIterator& OXGame::CheckIterator::operator++() {
       y2 = cury;
     }
     else {
-      x2 = curx;
-      y2 = cury;
+      //x2 = curx;
+      //y2 = cury;
       side = 2;
     }
   }

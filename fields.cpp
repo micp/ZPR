@@ -32,7 +32,7 @@ void EndGameVisitor::checkSwap() {
   int sY = line->getY1();
   int tX = line->getX2();
   int tY = line->getY2();
-  if(sX > tX || (sX == tX && sY > tY)) line->swap();
+  if(sX > tX || (sX <= tX && sY > tY)) line->swap();
 }
 void EndGameVisitor::visit(FieldX f) {
   checkSwap();
