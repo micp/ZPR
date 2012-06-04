@@ -203,7 +203,6 @@ void menuWidget::processCreateNewGameButton(WPushButton *b)
 void menuWidget::processShowGamesButton()
 {
   information->setText("");
-  std::cout<<"POCZATEK SHOW GAMES"<<std::endl;
   highScoresButton->hide();
   showGames->disable();
   newGameButton->disable();
@@ -231,17 +230,14 @@ void menuWidget::processShowGamesButton()
     btn->clicked().connect(boost::bind(&menuWidget::processChooseGameButton,this,btn));
     gamesAvailable->elementAt(i,1)->addWidget(btn);
     joinButtons.push_back(std::make_pair(btn,cit)); //vector of join buttons
-    std::cout<<"ITERACJA"<<std::endl;
     i++;
   }  
-  std::cout<<"PO ITERACJI"<<std::endl;
   gamesConnector->iterationEnd();
   gamesConnector->refRegister(*this); 
   
   WPushButton * hideGames = new WPushButton("Hide games list");
   hideGames->clicked().connect(boost::bind(&menuWidget::processHideListButton,this));
   gamesAvailable->elementAt(i,0)->addWidget(hideGames);
-	std::cout<<"WYCHODZE"<<std::endl;
 }  
 
 
@@ -403,7 +399,6 @@ void menuWidget::processRevengeButton(WPushButton * b)
 void menuWidget::gameStarted()
 {
   WApplication * app = WApplication::instance();
-  std::cout<<"GAME STARTED"<<std::endl;
   gameEnded = false;
   if(ifCreator) 
   {
@@ -461,7 +456,6 @@ void menuWidget::wonByGivingUp()
     it->second->disable();
   }
   app->triggerUpdate();
-  std::cout<<"WON BY GIVING UP"<<std::endl;
 }
 
 void menuWidget::playerExited()
@@ -518,7 +512,6 @@ void menuWidget::playerJoined()
 {
 	WApplication *app = WApplication::instance();
   information->setText("Opponent connected. Press start to begin");
-  std::cout<<" MOJ "<<(GameListRefresher*)this<<std::endl;
   startGame->enable();
   startGame->refresh();
   app->triggerUpdate();
@@ -527,7 +520,6 @@ void menuWidget::playerJoined()
   void menuWidget::endedWithWin(int a, int b, int c, int d)
   {
   WApplication *app = WApplication::instance();
-  std::cout<<"ENDED WITH WIN"<<std::endl;
   gameEnded = true;
   information->setText("You won!!!");
   giveUp->disable();
@@ -540,7 +532,6 @@ void menuWidget::playerJoined()
   }
   if(a == c)
   {
-    std::cout<<"ROZNICA "<<d-b<<std::endl;
     while(b<=d)
     {
     gameButtons[Coordinates(a,b)]->setIcon("/win.jpg");
@@ -582,7 +573,6 @@ void menuWidget::playerJoined()
 void menuWidget::endedWithDraw(int a, int b, int c, int d)
 {
   WApplication *app = WApplication::instance();
-  std::cout<<"ENDED WITH DRAW"<<std::endl;
   information->setText("Ended with draw");
   gameEnded = true;
   giveUp->disable();
@@ -597,7 +587,6 @@ void menuWidget::endedWithLose(int a, int b, int c, int d)
 {
   WApplication *app = WApplication::instance();
   information->setText("You loosed!");
-  std:cout<<"ENDED WITH LOSE"<<std::endl;
   gameEnded = true;
   giveUp->disable();
   endGame->enable();
