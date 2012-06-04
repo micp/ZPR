@@ -7,7 +7,8 @@
 
 using namespace std;
 using namespace boost;
-//This error is thrown when trying to get invalid value of ip
+/*This error is thrown when trying to get invalid value of ip
+ */
 class InvalidValueException{};
 
 /*

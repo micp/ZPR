@@ -18,6 +18,8 @@ using namespace Wt;
 
 typedef Auth::Dbo::UserDatabase<AuthInfo> UserDatabase;
 
+/** Rerepsents user not logged in exception
+ */
 class UserNotLoggedInException{};
 
 //This class represents one sesion with database

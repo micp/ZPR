@@ -26,6 +26,8 @@ using namespace boost;
 using namespace std;
 
 //Exception class
+/** Represents iterator error.
+ */
 class IteratorNotValid {};
 class GameListRefresher;
 

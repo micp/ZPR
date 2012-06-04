@@ -64,25 +64,10 @@ class OXGame {
     typedef boost::multi_array<Field*, 2> MapArray;
     typedef std::set<EndOfGameListener *> ListenerSet;
 
-    /** Winning line check iterator interface.
-     * Abstract class defining constraints on line checking iterators.
-     */
     class CheckIterator;
-    /** Horizontal check iterator.
-     * Checks horizontally for winning line.
-     */
     class HorizCheckIterator;
-    /** Vertical check iterator.
-     * Checks vertically for winning line.
-     */
     class VertCheckIterator;
-    /** Diagonal check iterator.
-     * Checks diagonally (/) for winning line.
-     */
     class SlashCheckIterator;
-    /** Opposite diagonal check iterator.
-     * Checks diagonally (\) for winning line.
-     */
     class BackslashCheckIterator;
 
     /** A pointer to the game field.
@@ -149,6 +134,9 @@ class OXGame {
 #include "endofgamelistener.h"
 #include "fields.h"
 
+/** Winning line check iterator interface.
+ * Abstract class defining constraints on line checking iterators.
+ */
 class OXGame::CheckIterator {
   public:
     /** CheckIterator constructor.
@@ -161,7 +149,11 @@ class OXGame::CheckIterator {
      * Stops at last possible step for the specific iterator type. 
      */
     CheckIterator& operator++();
+    /** Checks if equal based on curX and curY.
+     */
     bool operator!=(const CheckIterator& c) const;
+    /** Check if iterator can continue.
+     */
     virtual bool hasNext() = 0;
     int getCurX() const { return curx; }
     int getCurY() const { return cury; }
@@ -170,19 +162,44 @@ class OXGame::CheckIterator {
     int getY1() const { return y1; }
     int getY2() const { return y2; }
   protected:
+    /** Current iterator coordinates
+     */
     int curx, cury;
+    /** Size of game tied with the iterator.
+     */
     int size;
+    /** Game tied with the iterator.
+     */
     const OXGame* game;
+    /** Starting coordinates of the iterator.
+     */
     int x, y;
+    /** Opposite points of the current line.
+     */
     int x1, x2, y1, y2;
+    /** Determines current iterator direction.
+     */
     int side;
+    /** Determines current iterator type.
+     */
     char myType;
   private:
+    /** Checks if iterator can continue forward.
+     */
     virtual bool check() = 0;
+    /** Checks if iterator can continue backward>
+     */
     virtual bool reverseCheck() = 0;
+    /** Increments current iterator coordinates.
+     */
     virtual void increment() = 0;
+    /** Increments current iterator in reverse direction
+     */
     virtual void reverseIncrement() = 0;
 };
+/** Horizontal check iterator.
+* Checks horizontally for winning line.
+*/
 class OXGame::HorizCheckIterator : public CheckIterator {
   public:
     bool hasNext();
@@ -196,6 +213,9 @@ class OXGame::HorizCheckIterator : public CheckIterator {
     void increment() { curx++; }
     void reverseIncrement() { curx--; }
 };
+/** Vertical check iterator.
+* Checks vertically for winning line.
+*/
 class OXGame::VertCheckIterator : public CheckIterator {
   public:
     bool hasNext();
@@ -209,6 +229,9 @@ class OXGame::VertCheckIterator : public CheckIterator {
     void increment() { cury++; }
     void reverseIncrement() { cury--; }
 };
+/** Diagonal check iterator.
+* Checks diagonally (/) for winning line.
+*/
 class OXGame::SlashCheckIterator : public CheckIterator {
   public:
     bool hasNext();
@@ -222,6 +245,9 @@ class OXGame::SlashCheckIterator : public CheckIterator {
     void increment() { curx++; cury++; }
     void reverseIncrement() { curx--; cury--; }
 };
+/** Opposite diagonal check iterator.
+* Checks diagonally (\) for winning line.
+*/
 class OXGame::BackslashCheckIterator : public CheckIterator {
   public:
     bool hasNext();

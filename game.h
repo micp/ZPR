@@ -20,6 +20,8 @@ class ViewFunctor
 public:
 	void operato()( const Field &f , int x , int y );
 };*/
+/** Represents illegal command.
+ */
 class IllegalCommand{};
 #ifndef __GAMESCONNECTOR_TEST__
 class Game

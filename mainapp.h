@@ -14,6 +14,8 @@
 
 using namespace Wt;
 
+/** Starts application instance for cielnt.
+ */
 class MainApplication : public WApplication
 {
 public:
