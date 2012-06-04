@@ -17,6 +17,8 @@ using namespace Wt;
 //add some fields to make ranking and game search
 class User;
 typedef Auth::Dbo::AuthInfo<User> AuthInfo;
+/** This is the temporary version of one user record from data base
+*/
 
 class User: public Dbo::Dbo<User>
 {

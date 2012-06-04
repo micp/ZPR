@@ -17,20 +17,24 @@
 using namespace boost::interprocess;
 using namespace Wt;
 
-//Our brand new http server class supporting user authentication
-//don't touch this, leave this place jedi
+/** This is server class wchich allows users to connect with this program
+* through web browser */
 class OXGameServer: public WServer
 {
 public:
+	/** This is a Singleton class so you may get it's object only from 
+	* this function */
 	static OXGameServer& getServer();
 
 	~OXGameServer(){ delete ps_; }
-	
+	/** Return AuthServis required for AuthWidget */
 	Auth::AuthService& getAuthService() { return as_; }
 
+	/** Return PassWordServis required for AuthWidget */
 	Auth::PasswordService& getPasswordService() { return *ps_; }
 	
 private:
+	/** Singleton so the constructor is private*/
 	OXGameServer();
 
 	Auth::AuthService as_;

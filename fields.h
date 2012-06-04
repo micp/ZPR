@@ -7,20 +7,25 @@ class FieldEmpty;
 class EndOfGameListener;
 #include "endofgamelistener.h"
 #include "WinningLine.h"
-
 class FieldVisitor;
-class Field {
+/** Abstract base class for different field types*/
+class Field 
+{
   public:
+    /** Tests if the field is taken or not */
     virtual bool taken() const = 0;
+    /** Accepts the visitor */
     virtual void accept(FieldVisitor& fv) = 0;
+   /**Makes a deep copy of this field */
     virtual Field* clone() const = 0;
   protected:
     Field() {};
   private:
     Field(const Field&) {};
 }; 
-
-class FieldX: public Field {
+/**Field taken with X*/
+class FieldX: public Field 
+{
   public:
     FieldX() {};
     FieldX(const FieldX&) {};
@@ -28,8 +33,9 @@ class FieldX: public Field {
     bool taken() const;
     void accept(FieldVisitor& fv);
 };
-
-class FieldO: public Field {
+/**Field taken with O*/
+class FieldO: public Field 
+{
   public:
     FieldO() {};
     FieldO(const FieldO&) {};
@@ -37,8 +43,9 @@ class FieldO: public Field {
     bool taken() const;
     void accept(FieldVisitor& fv);
 };
-
-class FieldEmpty: public Field {
+/**This field is empty*/
+class FieldEmpty: public Field 
+{
   public:
     FieldEmpty() {};
     FieldEmpty(const FieldEmpty&) {};
@@ -49,13 +56,17 @@ class FieldEmpty: public Field {
 
 class FieldTakenException {};
 
-class FieldVisitor {
+/** This is field visitor to get some information about actual field type*/
+class FieldVisitor 
+{
   public:
     virtual void visit(FieldX f) = 0;
     virtual void visit(FieldO f) = 0;
     virtual void visit(FieldEmpty f) = 0;
 };
-class EndGameVisitor : public FieldVisitor {
+/**Visitor used for calling suitable enofgamelistener method */
+class EndGameVisitor : public FieldVisitor 
+{
   public:
     EndGameVisitor(EndOfGameListener *l, WinningLine& ln) : listener(l),
       line(&ln) {}
@@ -67,7 +78,9 @@ class EndGameVisitor : public FieldVisitor {
     EndOfGameListener* listener;
     WinningLine* line;
 };
-class FieldTypeVisitor : public FieldVisitor {
+/** Visitor used for checking actual field type */
+class FieldTypeVisitor : public FieldVisitor 
+{
   public:
     void visit(FieldX f);
     void visit(FieldO f);
@@ -76,5 +89,4 @@ class FieldTypeVisitor : public FieldVisitor {
   private:
     char result;
 };
-//#include "endofgamelistener.h"
 #endif

@@ -10,9 +10,7 @@ using namespace boost;
 //This error is thrown when trying to get invalid value of ip
 class InvalidValueException{};
 
-/*
-	read, check correctness and store IP address
-*/
+/** Read, check correctness and store IP address */
 class IPAddress
 {
 public:
@@ -20,11 +18,14 @@ public:
 
 	friend istream& operator>>(istream &in , IPAddress &a );
 
+	/** Check if current value of ip in class is valid or not */
 	bool isValid() { return valid_; }
 
+	/**Returns the string that represents IP */
 	const string& getIP() throw( InvalidValueException );
 
 private:
+	/** Validates if the string is valid value or not */
 	void validate();
 	string ip_;
 	bool valid_;

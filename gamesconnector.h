@@ -29,17 +29,21 @@ using namespace std;
 class IteratorNotValid {};
 class GameListRefresher;
 
-//Class for connecting palyers into one game
+/**Class for connecting two palyers into one game*/
 class GamesConnector
 {
 public:
+	/** some structure packed up for allways valid iterator */
 	struct Node
 	{
 		Node( ::Game *game , bool *valid ): game_( game ) , valid_( valid ) {}
+		/** shared ptr to some game with free slot*/
 		boost::shared_ptr<Game> game_;
+		/**Information about data pointed by GamesConnector::const_iterator*/
 		boost::shared_ptr<bool> valid_;
 	};
-
+	/** Allways valid const_iterator for getting game list
+	*	if dereferenced invalid value exception is being thrown */
 	 class const_iterator 
         {
                 friend class GamesConnector;
@@ -60,58 +64,61 @@ public:
                 const string* operator->() const;
 
                 // pre
+		/**DONOT use ++ -- operations on iterators not between iterationBegin and iterationEnd*/
                 const_iterator& operator++();
 
                 // post
+		/**DONOT use ++ -- operations on iterators not between iterationBegin and iterationEnd*/
                 const_iterator operator++(int);
 
                 // pre
+		/**DONOT use ++ -- operations on iterators not between iterationBegin and iterationEnd*/
                 const_iterator& operator--();
 
                 // post
+		/**DONOT use ++ -- operations on iterators not between iterationBegin and iterationEnd*/
                 const_iterator operator--(int);
 
 		bool operator==(const const_iterator& a) const;
 
 		bool operator!=(const const_iterator& a) const;
-
+		/** Tests if the value pointed by iterator is valid */
 		bool valid() const;
 	};
 
 	friend class const_iterator;
-
+	/** This is a singleton so you should use this function to get object of this class*/
 	static GamesConnector& getInstance();
 
-	//means that user would like to set a new game
+	/**Means that user would like to set a new game*/
 	boost::shared_ptr<Game> newGame( GameListRefresher &ref );
 
-	//When you created game, there was no other player to play with you
+	/**When you created game, there was no other player to play with you*/
 	void deleteGame( boost::shared_ptr<Game> g );
  
-	//after succesfull return from this function you will be no longer notified about list changes
+	/** Join to choosen game and after succesfull return from this function
+	* you will be no longer notified about list changes*/
 	boost::shared_ptr<Game> join( const_iterator &game , GameListRefresher &ref );
 
-	//call this if you are viewing a list and you'd like it to be allways actual
+	/**call this if you are viewing a list and you'd like it to be allways actual*/
 	void refRegister( GameListRefresher &ref );
 
-	//you should allways call this method when actual list game is not neccesary anymore for you
+	/**You should allways call this method when actual list game is not neccesary anymore for you*/
 	void unregister( GameListRefresher &ref );
 
-	//DONOT use ++ -- operations on iterators not between this calls
-	//This method should be called befor iteration over game list
+	/**This method should be called befor iteration over game list to make synchronization */
 	void iterationBegin() { rw_synch_.readerEnter(); }
 
-	//This method must be called after iteration
+	/**This method must be called after iteration*/
 	void iterationEnd() { rw_synch_.readerLeave(); }
 
-	//DONOT use this unless between iterationBegin() and iterationEnd()
+	/**DONOT use this unless between iterationBegin() and iterationEnd()*/
 	const_iterator begin();
 
-	//DONOT use this unless between iterationBegin() and iterationEnd()
+	/**DONOT use this unless between iterationBegin() and iterationEnd()*/
 	const_iterator end();
 
-	//class which implements solution for readers and writters (writters prefered)
-	//Do not hesitate to use it if you have to
+	/** Class which implements solution for readers and writters problem (writters prefered)*/
 	class Synchronizer
 	{
 	public:
