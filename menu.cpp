@@ -55,5 +55,6 @@ void menu::addWidgets()
 }
 menu::~menu()
 {
-  delete menu_;
+  	delete menu_;
+
 }

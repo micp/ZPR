@@ -1,7 +1,6 @@
 #include "mainapp.h"
 
 MainApplication::MainApplication(const WEnvironment& env)
-
   : WApplication(env), session_( appRoot() + "dataBase.db")
 {
  
@@ -15,6 +14,7 @@ MainApplication::MainApplication(const WEnvironment& env)
   authW->setRegistrationEnabled(true);
   authW->processEnvironment();
   authW->setMaximumSize(450,WLength::Auto);
+  
   gameMenu = new menu(root(), &session_);	
   gameMenu->addWidget(authW);
   gameMenu->addWidgets();
@@ -24,14 +24,11 @@ void MainApplication::authEvent()
 {
   if(session_.login().loggedIn())
   {
-    std::cout<<"USER: "<<session_.login().user().id()<<" logged in"<<std::endl;
-    std::cout<<session_.getUserName()<<std::endl;
     gameMenu->logInButton();
     gameMenu->setUserName(session_.getUserName());
   }
   else
   {
-    std::cout<<"User logged out"<<std::endl;
     gameMenu->logOutButton();
   }
      

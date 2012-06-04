@@ -207,8 +207,5 @@ protected:
 	virtual	void refreshGameList() {}
 };
 
-
-//when normal compilation
-
 #endif
 #endif

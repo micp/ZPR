@@ -29,19 +29,19 @@ public:
 
 	Game( GameListRefresher &ref );
 
-	~Game();// { delete end_; } 
+	~Game(); 
 	
-	void join( GameListRefresher &ref );//done
+	void join( GameListRefresher &ref );
 
-	void putField( GameListRefresher &ref , int x , int y );//done
+	void putField( GameListRefresher &ref , int x , int y );
 
-	void start( GameListRefresher &ref );//done
+	void start( GameListRefresher &ref );
 
-	void giveUp( GameListRefresher &ref );//done
+	void giveUp( GameListRefresher &ref );
 
-	void exit( GameListRefresher &ref );//done
+	void exit( GameListRefresher &ref );
 
-	void revenge( GameListRefresher &ref );//done
+	void revenge( GameListRefresher &ref );
 	
 	std::string& getServerUserName();
 
